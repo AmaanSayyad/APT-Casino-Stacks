@@ -5,14 +5,14 @@
 
 import { defineChain } from 'viem';
 
-// 0G Galileo Testnet Chain Definition
+// Stacks Testnet Testnet Chain Definition
 export const ogGalileo = defineChain({
   id: 16602,
   name: '0G-Galileo-Testnet',
   nativeCurrency: {
     decimals: 18,
-    name: 'OG',
-    symbol: 'OG',
+    name: 'STX',
+    symbol: 'STX',
   },
   rpcUrls: {
     default: {
@@ -24,7 +24,7 @@ export const ogGalileo = defineChain({
   },
   blockExplorers: {
     default: {
-      name: '0G Galileo Explorer',
+      name: 'Stacks Testnet Explorer',
       url: 'https://chainscan-galileo.0g.ai',
     },
   },

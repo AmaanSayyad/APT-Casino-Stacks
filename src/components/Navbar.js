@@ -84,8 +84,8 @@ const MOCK_SEARCH_RESULTS = {
     { id: 'game4', name: 'Plinko', path: '/game/plinko', type: 'Popular' },
   ],
   tournaments: [
-    { id: 'tournament1', name: 'High Roller Tournament', path: '/tournaments/high-roller', prize: '10,000 OG' },
-    { id: 'tournament2', name: 'Weekend Battle', path: '/tournaments/weekend-battle', prize: '5,000 OG' },
+    { id: 'tournament1', name: 'High Roller Tournament', path: '/tournaments/high-roller', prize: '10,000 STX' },
+    { id: 'tournament2', name: 'Weekend Battle', path: '/tournaments/weekend-battle', prize: '5,000 STX' },
   ],
   pages: [
     { id: 'page1', name: 'Bank', path: '/bank', description: 'Deposit and withdraw funds' },
@@ -156,7 +156,7 @@ export default function Navbar() {
     {
       id: '1',
       title: 'Balance Updated',
-      message: 'Your OG balance has been updated',
+      message: 'Your STX balance has been updated',
       isRead: false,
       time: '2 min ago'
     },
@@ -937,7 +937,7 @@ export default function Navbar() {
                   <div className="flex items-center space-x-2">
                     <span className="text-xs text-gray-300">Balance:</span>
                     <span className="text-sm text-green-300 font-medium">
-                      {isLoadingBalance ? 'Loading...' : `${parseFloat(userBalance || '0').toFixed(5)} OG`}
+                      {isLoadingBalance ? 'Loading...' : `${parseFloat(userBalance || '0').toFixed(5)} STX`}
                     </span>
                     <button
                       onClick={() => setShowBalanceModal(true)}
@@ -1026,7 +1026,7 @@ export default function Navbar() {
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-sm text-gray-300">House Balance:</span>
                                       <span className="text-sm text-green-300 font-medium">
-                      {isLoadingBalance ? 'Loading...' : `${parseFloat(userBalance || '0').toFixed(5)} OG`}
+                      {isLoadingBalance ? 'Loading...' : `${parseFloat(userBalance || '0').toFixed(5)} STX`}
                     </span>
                     </div>
                     <button
@@ -1083,7 +1083,7 @@ export default function Navbar() {
               <div className="mb-4 p-3 bg-gradient-to-r from-green-900/20 to-green-800/10 rounded-lg border border-green-800/30">
                 <span className="text-sm text-gray-300">Current Balance:</span>
                 <div className="text-lg text-green-300 font-bold">
-                  {isLoadingBalance ? 'Loading...' : `${parseFloat(userBalance || '0').toFixed(5)} OG`}
+                  {isLoadingBalance ? 'Loading...' : `${parseFloat(userBalance || '0').toFixed(5)} STX`}
                 </div>
               </div>
               
@@ -1125,7 +1125,7 @@ export default function Navbar() {
                   </button>
                 </div>
                 <p className="text-xs text-gray-400 mt-1">
-                  Transfer OG from your wallet to house balance for gaming
+                  Transfer STX from your wallet to house balance for gaming
                 </p>
                 {/* Quick Deposit Buttons */}
                 <div className="flex gap-1 mt-2">
@@ -1136,7 +1136,7 @@ export default function Navbar() {
                       className="flex-1 px-2 py-1 text-xs bg-gray-700/50 hover:bg-gray-600/50 text-gray-300 rounded transition-colors"
                       disabled={isDepositing}
                     >
-                      {amount} OG
+                      {amount} STX
                     </button>
                   ))}
                 </div>
@@ -1145,7 +1145,7 @@ export default function Navbar() {
 
               {/* Withdraw Section */}
               <div className="mb-4">
-                <h4 className="text-sm font-medium text-white mb-2">Withdraw All OG</h4>
+                <h4 className="text-sm font-medium text-white mb-2">Withdraw All STX</h4>
                 <button
                   onClick={handleWithdraw}
                   disabled={!isConnected || parseFloat(userBalance || '0') <= 0 || isWithdrawing}
@@ -1157,7 +1157,7 @@ export default function Navbar() {
                       Processing...
                     </>
                   ) : isConnected ? (
-                    parseFloat(userBalance || '0') > 0 ? 'Withdraw All OG' : 'No Balance'
+                    parseFloat(userBalance || '0') > 0 ? 'Withdraw All STX' : 'No Balance'
                   ) : 'Connect Wallet'}
                   {isConnected && parseFloat(userBalance || '0') > 0 && !isWithdrawing && (
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1167,7 +1167,7 @@ export default function Navbar() {
                 </button>
                 {isConnected && parseFloat(userBalance || '0') > 0 && (
                   <p className="text-xs text-gray-400 mt-1 text-center">
-                    Withdraw {parseFloat(userBalance || '0').toFixed(5)} OG to your wallet
+                    Withdraw {parseFloat(userBalance || '0').toFixed(5)} STX to your wallet
                   </p>
                 )}
               </div>

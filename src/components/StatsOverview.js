@@ -46,7 +46,7 @@ const StatsOverview = () => {
                 </span>
               )}
             </div>
-            <p className="text-xs uppercase mt-1 text-white/70">Total OG Pool</p>
+            <p className="text-xs uppercase mt-1 text-white/70">Total STX Pool</p>
           </div>
           
           <div className="flex flex-col items-center">
@@ -59,7 +59,7 @@ const StatsOverview = () => {
                 </span>
               )}
             </div>
-            <p className="text-xs uppercase mt-1 text-white/70">OG APY</p>
+            <p className="text-xs uppercase mt-1 text-white/70">STX APY</p>
           </div>
           
           <div className="flex flex-col items-center">
@@ -72,7 +72,7 @@ const StatsOverview = () => {
                 </span>
               )}
             </div>
-            <p className="text-xs uppercase mt-1 text-white/70">OG Price</p>
+            <p className="text-xs uppercase mt-1 text-white/70">STX Price</p>
           </div>
           
           <div className="flex flex-col items-center">

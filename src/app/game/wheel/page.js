@@ -152,11 +152,11 @@ export default function Home() {
     }
   };
 
-    // Check Redux balance (balance is already in OG)
+    // Check Redux balance (balance is already in STX)
     const currentBalance = parseFloat(userBalance || '0');
     
     if (currentBalance < betAmount) {
-      alert(`Insufficient balance. You have ${currentBalance.toFixed(5)} OG but need ${betAmount} OG`);
+      alert(`Insufficient balance. You have ${currentBalance.toFixed(5)} STX but need ${betAmount} STX`);
       return;
     }
 
@@ -173,7 +173,7 @@ export default function Home() {
       const newBalance = (parseFloat(userBalance || '0') - betAmount).toString();
       dispatch(setBalance(newBalance));
       
-      console.log('Balance deducted. New balance:', parseFloat(newBalance).toFixed(5), 'OG');
+      console.log('Balance deducted. New balance:', parseFloat(newBalance).toFixed(5), 'STX');
       
       // Set up callback to handle wheel animation completion
       window.wheelBetCallback = async (landedMultiplier) => {
@@ -237,7 +237,7 @@ export default function Home() {
           
           // Show result and update balance immediately
           if (actualMultiplier > 0) {
-            notification.success(`Congratulations! ${betAmount} OG × ${actualMultiplier.toFixed(2)} = ${winAmount.toFixed(5)} OG won!`);
+            notification.success(`Congratulations! ${betAmount} STX × ${actualMultiplier.toFixed(2)} = ${winAmount.toFixed(5)} STX won!`);
             
             // Update balance with winnings
             const currentBalance = parseFloat(userBalance || '0');
@@ -329,7 +329,7 @@ export default function Home() {
       });
       
       if (currentBalance < currentBet) {
-        alert(`Insufficient balance for bet ${i + 1}. Need ${currentBet.toFixed(5)} OG but have ${currentBalance.toFixed(5)} OG`);
+        alert(`Insufficient balance for bet ${i + 1}. Need ${currentBet.toFixed(5)} STX but have ${currentBalance.toFixed(5)} STX`);
         break;
       }
 
@@ -432,7 +432,7 @@ export default function Home() {
       
       // Show notification for win
       if (actualMultiplier > 0) {
-        notification.success(`Congratulations! ${currentBet} OG × ${actualMultiplier.toFixed(2)} = ${winAmount.toFixed(8)} OG won!`);
+        notification.success(`Congratulations! ${currentBet} STX × ${actualMultiplier.toFixed(2)} = ${winAmount.toFixed(8)} STX won!`);
       }
 
       // Store history entry
@@ -504,8 +504,8 @@ export default function Home() {
     // Sample statistics
     const gameStatistics = {
       totalBets: '1,856,342',
-      totalVolume: '8.3M OG',
-      maxWin: '243,500 OG'
+      totalVolume: '8.3M STX',
+      maxWin: '243,500 STX'
     };
     
     return (
@@ -682,7 +682,7 @@ export default function Home() {
               setGameMode={setGameMode}
               betAmount={betAmount}
               setBetAmount={setBetAmount}
-              balance={parseFloat(userBalance || '0')} // Balance is already in OG
+              balance={parseFloat(userBalance || '0')} // Balance is already in STX
               manulBet={manulBet}
               risk={selectedRisk}
               setRisk={setSelectedRisk}

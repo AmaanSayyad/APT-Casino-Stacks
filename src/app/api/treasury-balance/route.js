@@ -42,7 +42,7 @@ export async function GET() {
       },
       entropy: {
         contractAddress: entropyContractAddress,
-        requiredFee: "0.001" // OG
+        requiredFee: "0.001" // STX
       }
     });
     

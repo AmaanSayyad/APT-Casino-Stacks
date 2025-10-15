@@ -31,7 +31,7 @@ export async function POST(request) {
     let fee;
     try {
       fee = await contract.getFeeV2(200000); // 200k gas limit
-      console.log('💰 Fee:', ethers.formatEther(fee), 'OG');
+      console.log('💰 Fee:', ethers.formatEther(fee), 'STX');
     } catch (error) {
       console.warn('⚠️ Could not get fee, using default:', error.message);
       fee = ethers.parseEther('0.001'); // Default fee
@@ -46,6 +46,15 @@ export async function POST(request) {
     // Create wallet and signer
     const wallet = new ethers.Wallet(privateKey, provider);
     const contractWithSigner = contract.connect(wallet);
+    
+    // Check wallet balance
+    const balance = await provider.getBalance(wallet.address);
+    console.log('💰 Treasury wallet balance:', ethers.formatEther(balance), 'ETH');
+    console.log('💰 Treasury wallet address:', wallet.address);
+    
+    if (balance < fee) {
+      throw new Error(`Insufficient balance. Required: ${ethers.formatEther(fee)} ETH, Available: ${ethers.formatEther(balance)} ETH`);
+    }
     
     // Request random value from Pyth Entropy
     console.log('🔄 Requesting random value from Pyth Entropy...');
@@ -126,6 +135,12 @@ export async function POST(request) {
     
   } catch (error) {
     console.error('❌ API: Error generating entropy:', error);
+    console.error('❌ API: Error details:', {
+      message: error.message,
+      code: error.code,
+      reason: error.reason,
+      stack: error.stack
+    });
     
     return Response.json({
       success: false,

@@ -31,6 +31,7 @@ import StrategyGuide from './components/StrategyGuide';
 import RoulettePayout from './components/RoulettePayout';
 import WinProbabilities from './components/WinProbabilities';
 import RouletteHistory from './components/RouletteHistory';
+import { useStacksWallet } from '@/contexts/StacksWalletContext';
 import { useAccount } from 'wagmi';
 import { useSelector, useDispatch } from 'react-redux';
 import { setBalance, setLoading, loadBalanceFromStorage } from '@/store/balanceSlice';
@@ -42,7 +43,7 @@ import pythEntropyService from '@/services/PythEntropyService';
 const CASINO_MODULE_ADDRESS = "0x1234567890123456789012345678901234567890123456789012345678901234";
 
 const parseOGAmount = (amount) => {
-  // Parse OG amount
+  // Parse STX amount
   return parseFloat(amount);
 };
 
@@ -1104,8 +1105,8 @@ export default function GameRoulette() {
                       <FaCoins className="text-yellow-400" />
                     </div>
                     <div className="text-xs text-white/50 font-sans text-center">Volume</div>
-                    <div className="text-white font-display text-sm md:text-base truncate w-full text-center" title={`${gameStatistics.totalVolume} OG`}>
-                      {gameStatistics.totalVolume} OG
+                    <div className="text-white font-display text-sm md:text-base truncate w-full text-center" title={`${gameStatistics.totalVolume} STX`}>
+                      {gameStatistics.totalVolume} STX
                     </div>
                   </div>
 
@@ -1114,8 +1115,8 @@ export default function GameRoulette() {
                       <FaTrophy className="text-yellow-500" />
                     </div>
                     <div className="text-xs text-white/50 font-sans text-center">Max Win</div>
-                    <div className="text-white font-display text-sm md:text-base truncate w-full text-center" title={`${gameStatistics.maxWin} OG`}>
-                      {gameStatistics.maxWin} OG
+                    <div className="text-white font-display text-sm md:text-base truncate w-full text-center" title={`${gameStatistics.maxWin} STX`}>
+                      {gameStatistics.maxWin} STX
                     </div>
                   </div>
                 </motion.div>
@@ -1190,16 +1191,21 @@ export default function GameRoulette() {
   const [bettingHistory, setBettingHistory] = useState([]);
   const [error, setError] = useState(null);
 
-  // Ethereum wallet
-  const { address, isConnected } = useAccount();
-  const account = { address };
-  const connected = isConnected;
-  const isWalletReady = isConnected && address;
+  // Stacks wallet for main functionality
+  const { address: stacksAddress, isConnected: stacksConnected } = useStacksWallet();
+  
+  // Wagmi for Pyth Entropy (Arbitrum Sepolia)
+  const { address: ethAddress, isConnected: ethConnected } = useAccount();
+  
+  // Use Stacks wallet as primary
+  const account = { address: stacksAddress };
+  const connected = stacksConnected;
+  const isWalletReady = stacksConnected && stacksAddress;
   const [realBalance, setRealBalance] = useState('0');
-  const { balance } = useToken(address); // Keep for compatibility
+  const { balance } = useToken(stacksAddress); // Keep for compatibility
   const HOUSE_ADDR = CASINO_MODULE_ADDRESS;
 
-  // Function to fetch real OG balance will be defined after useSelector
+  // Function to fetch real STX balance will be defined after useSelector
 
   // Sound refs
   const spinSoundRef = useRef(null);
@@ -1366,7 +1372,7 @@ export default function GameRoulette() {
   const dispatch = useDispatch();
   const { userBalance, isLoading: isLoadingBalance } = useSelector((state) => state.balance);
 
-  // Function to fetch real OG balance
+  // Function to fetch real STX balance
   const fetchRealBalance = useCallback(async () => {
     if (!account?.address) return;
 
@@ -1596,8 +1602,8 @@ export default function GameRoulette() {
 
   const lockBet = async () => {
     // Check if wallet is connected
-    if (!isConnected) {
-      alert("Please connect your Ethereum wallet first to play Roulette!");
+    if (!stacksConnected) {
+      alert("Please connect your Stacks wallet first to play Roulette!");
       return;
     }
 
@@ -1607,11 +1613,11 @@ export default function GameRoulette() {
     }
 
     // Check Redux balance instead of wallet
-    const currentBalance = parseFloat(userBalance || '0'); // Balance is already in OG
+    const currentBalance = parseFloat(userBalance || '0'); // Balance is already in STX
     const totalBetAmount = total;
 
     if (currentBalance < totalBetAmount) {
-      alert(`Insufficient balance. You have ${currentBalance.toFixed(5)} OG but need ${totalBetAmount.toFixed(5)} OG`);
+      alert(`Insufficient balance. You have ${currentBalance.toFixed(5)} STX but need ${totalBetAmount.toFixed(5)} STX`);
       return;
     }
 
@@ -1633,7 +1639,7 @@ export default function GameRoulette() {
       
       // Check if user has enough balance
       if (originalBalance < totalBetAmount) {
-        alert(`Insufficient balance. You have ${originalBalance.toFixed(5)} OG but need ${totalBetAmount.toFixed(5)} OG`);
+        alert(`Insufficient balance. You have ${originalBalance.toFixed(5)} STX but need ${totalBetAmount.toFixed(5)} STX`);
         setSubmitDisabled(false);
         setWheelSpinning(false);
         return;
@@ -2089,16 +2095,16 @@ export default function GameRoulette() {
         // Show result notification
         if (netResult > 0) {
           const winMessage = winningBets.length === 1
-                    ? `🎉 WINNER! ${winningBets[0].name} - You won ${(netResult - totalBetAmount).toFixed(5)} OG!`
-                    : `🎉 MULTIPLE WINNERS! ${winningBets.length} bets won - Total: ${(netResult - totalBetAmount).toFixed(5)} OG!`;
+                    ? `🎉 WINNER! ${winningBets[0].name} - You won ${(netResult - totalBetAmount).toFixed(5)} STX!`
+                    : `🎉 MULTIPLE WINNERS! ${winningBets.length} bets won - Total: ${(netResult - totalBetAmount).toFixed(5)} STX!`;
 
           setNotificationMessage(winMessage);
           setNotificationSeverity("success");
           setSnackbarMessage(winMessage);
         } else {
-          setNotificationMessage(`💸 Number ${winningNumber} - You lost ${totalBetAmount.toFixed(5)} OG!`);
+          setNotificationMessage(`💸 Number ${winningNumber} - You lost ${totalBetAmount.toFixed(5)} STX!`);
           setNotificationSeverity("error");
-          setSnackbarMessage(`💸 Number ${winningNumber} - You lost ${totalBetAmount.toFixed(5)} OG!`);
+          setSnackbarMessage(`💸 Number ${winningNumber} - You lost ${totalBetAmount.toFixed(5)} STX!`);
         }
         setSnackbarOpen(true);
 
@@ -2157,7 +2163,7 @@ export default function GameRoulette() {
     if (e) e.preventDefault();
     playSound(winSoundRef);
 
-    if (!address) {
+    if (!stacksAddress) {
       console.error("Wallet not connected.");
       alert("Please connect your wallet.");
       return;
@@ -2175,7 +2181,7 @@ export default function GameRoulette() {
           abi: rouletteABI,
           functionName: "withdrawTokens",
           args: [amount],
-          account: address,
+          account: ethAddress, // Use ETH address for Ethereum contracts
         });
 
       // Execute the contract transaction
@@ -2200,7 +2206,7 @@ export default function GameRoulette() {
     }
   }, [playSound, winnings, reset]);
 
-  const config = undefined; // wagmi removed
+  // Wagmi config removed - using Stacks wallet
 
   const contractAddress = '0xbD8Ca722093d811bF314dDAB8438711a4caB2e73'; // ✅ FIX THIS
 
@@ -2229,9 +2235,9 @@ export default function GameRoulette() {
     console.log("Checking network...");
 
     try {
-      // First check if user is connected via wagmi
-      if (isConnected && address) {
-        console.log("Wallet connected via wagmi:", address);
+      // First check if user is connected via Stacks wallet
+      if (stacksConnected && stacksAddress) {
+        console.log("Wallet connected via Stacks:", stacksAddress);
         setCorrectNetwork(true);
         return;
       }
@@ -2280,7 +2286,7 @@ export default function GameRoulette() {
     // Only check when component mounts or when wallet connection changes
     if (typeof window !== "undefined") {
       console.log("Wallet connection state changed, checking network...");
-      console.log("isConnected:", isConnected, "address:", address);
+      console.log("stacksConnected:", stacksConnected, "stacksAddress:", stacksAddress);
 
       checkNetwork();
 
@@ -2307,7 +2313,7 @@ export default function GameRoulette() {
 
       return setupListeners();
     }
-  }, [isConnected, address]); // Add dependencies to run when wallet connection changes
+  }, [stacksConnected, stacksAddress]); // Add dependencies to run when wallet connection changes
 
   const switchNetwork = async () => {
     // Ensure we're running in the browser
@@ -2315,7 +2321,7 @@ export default function GameRoulette() {
 
     try {
       // Check if wallet is connected first
-      if (!isConnected) {
+      if (!stacksConnected) {
         console.log("Wallet not connected, please connect wallet first");
         alert("Please connect your wallet first using the connect button in the top right corner");
         return;
@@ -2609,7 +2615,7 @@ export default function GameRoulette() {
               }}
             >
               <FaCoins className="text-yellow-400" />
-              Balance: {isConnected ? `${parseFloat(userBalance || '0').toFixed(5)} OG` : 'Connect Wallet'}
+              Balance: {stacksConnected ? `${parseFloat(userBalance || '0').toFixed(5)} STX` : 'Connect Wallet'}
             </Typography>
           </Box>
 
@@ -3101,7 +3107,7 @@ export default function GameRoulette() {
                 </Typography>
               </Box>
               
-              {!isConnected ? (
+              {!stacksConnected ? (
                 <Box sx={{ textAlign: 'center', py: 1 }}>
                   <Button
                     onClick={() => {
@@ -3163,7 +3169,7 @@ export default function GameRoulette() {
               />
 
               <Typography color="white" sx={{ opacity: 0.8 }}>
-                Current Bet Total: {total.toFixed(5)} OG
+                Current Bet Total: {total.toFixed(5)} STX
               </Typography>
 
               {/* Quick Bet Buttons */}
@@ -3590,9 +3596,9 @@ export default function GameRoulette() {
             {notificationIndex === notificationSteps.RESULT_READY && (
               <Typography>
                 {winnings > 0
-                  ? `🎉 You won ${winnings.toFixed(4)} OG!`
+                  ? `🎉 You won ${winnings.toFixed(4)} STX!`
                   : winnings < 0
-                  ? `💸 You lost ${Math.abs(winnings).toFixed(4)} OG!`
+                  ? `💸 You lost ${Math.abs(winnings).toFixed(4)} STX!`
                   : "🤝 Break even!"}
               </Typography>
             )}

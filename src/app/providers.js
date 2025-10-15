@@ -9,6 +9,9 @@ import { ThemeProvider } from 'next-themes';
 import { StacksWalletProvider } from '@/contexts/StacksWalletContext';
 import { createTheme, ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import { WagmiProvider } from 'wagmi';
+import { config } from '@/config/wagmi';
+import { WalletStatusProvider } from '@/hooks/useWalletStatus';
 
 const queryClient = new QueryClient();
 
@@ -94,16 +97,20 @@ export default function Providers({ children }) {
   return (
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
-        <StacksWalletProvider>
-          <NotificationProvider>
-            <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-              <MuiThemeProvider theme={muiTheme}>
-                <CssBaseline />
-                {children}
-              </MuiThemeProvider>
-            </ThemeProvider>
-          </NotificationProvider>
-        </StacksWalletProvider>
+        <WagmiProvider config={config}>
+          <StacksWalletProvider>
+            <WalletStatusProvider>
+              <NotificationProvider>
+                <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+                  <MuiThemeProvider theme={muiTheme}>
+                    <CssBaseline />
+                    {children}
+                  </MuiThemeProvider>
+                </ThemeProvider>
+              </NotificationProvider>
+            </WalletStatusProvider>
+          </StacksWalletProvider>
+        </WagmiProvider>
       </QueryClientProvider>
     </Provider>
   );

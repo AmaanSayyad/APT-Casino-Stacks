@@ -112,7 +112,7 @@ export default function Mines() {
   const handleFormSubmit = async (formData) => {
     try {
       console.log('🔮 PYTH ENTROPY: Initializing Mines game session...');
-      console.log('🔗 Network: 0G Network | Token: OG | Protocol: Pyth Entropy');
+      console.log('🔗 Network: Stacks | Token: STX | Protocol: Pyth Entropy');
       
       // Initialize Pyth Entropy
       console.log('🔮 PYTH ENTROPY: Initializing...');
@@ -120,7 +120,7 @@ export default function Mines() {
       console.log('✅ PYTH ENTROPY: Initialized successfully');
       
       console.log('✅ PYTH ENTROPY: Mines game session created successfully');
-      console.log(`🎮 Game Config: ${formData.mines || 3} mines | ${formData.betAmount || '0.01'} OG bet`);
+      console.log(`🎮 Game Config: ${formData.mines || 3} mines | ${formData.betAmount || '0.01'} STX bet`);
       
     } catch (error) {
       console.error('❌ PYTH ENTROPY: Connection failed:', error);
@@ -222,9 +222,9 @@ export default function Mines() {
     const newHistoryItem = {
       id: Date.now(),
       mines: result.mines || 0,
-      bet: `${result.betAmount || '0.00000'} OG`,
+      bet: `${result.betAmount || '0.00000'} STX`,
       outcome: result.won ? 'win' : 'loss',
-      payout: result.won ? `${result.payout || '0.00000'} OG` : '0.00000 OG',
+      payout: result.won ? `${result.payout || '0.00000'} STX` : '0.00000 STX',
       multiplier: result.won ? `${result.multiplier || '0.00'}x` : '0.00x',
       time: 'Just now',
       entropyProof: entropyProof

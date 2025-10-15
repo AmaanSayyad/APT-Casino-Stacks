@@ -8,6 +8,7 @@ import React, {
   useCallback,
 } from 'react';
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
+import { useStacksWallet } from '@/contexts/StacksWalletContext';
 
 const WalletStatusContext = createContext(null);
 
@@ -15,14 +16,25 @@ export function WalletStatusProvider({ children }) {
   // Always use real wallet - no dev wallet
   const isDev = false;
 
+  // Stacks wallet (primary)
   const {
-    address: account,
-    isConnected: connected,
+    address: stacksAddress,
+    isConnected: stacksConnected
+  } = useStacksWallet();
+
+  // Wagmi wallet (for Pyth Entropy)
+  const {
+    address: ethAccount,
+    isConnected: ethConnected,
     chain: network
   } = useAccount();
 
   const { connect, connectors } = useConnect();
   const { disconnect } = useDisconnect();
+
+  // Use Stacks as primary wallet
+  const account = stacksAddress;
+  const connected = stacksConnected;
 
   const [devWallet, setDevWallet] = useState({
     isConnected: false,

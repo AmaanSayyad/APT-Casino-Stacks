@@ -29,8 +29,8 @@ const HowItWorksSection = () => {
     },
     {
       id: 2,
-      title: 'Get OG Tokens',
-      description: 'Power your gameplay with OG tokens of 0G Network.',
+      title: 'Get STX Tokens',
+      description: 'Power your gameplay with STX tokens of Stacks.',
       emoji: '💰'
     },
     {
@@ -42,7 +42,7 @@ const HowItWorksSection = () => {
     {
       id: 4,
       title: 'Earn Rewards',
-      description: 'Win OG tokens and unlock exclusive perks through our multi-tiered loyalty program. Earn cashback on losses and gain access to tournaments.',
+      description: 'Win STX tokens and unlock exclusive perks through our multi-tiered loyalty program. Earn cashback on losses and gain access to tournaments.',
       emoji: '🏆'
     },
   ];
@@ -112,7 +112,7 @@ const HowItWorksSection = () => {
                   <EthereumConnectWalletButton />
                 ) : (
                   <GradientBorderButton className="transform hover:scale-105 transition-transform">
-                    {activeStep === 2 ? 'Get OG Tokens' : 
+                    {activeStep === 2 ? 'Get STX Tokens' : 
                      activeStep === 3 ? 'Browse Games' : 'View Rewards'}
                   </GradientBorderButton>
                 )}

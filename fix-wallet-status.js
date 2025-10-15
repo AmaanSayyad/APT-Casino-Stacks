@@ -5,7 +5,7 @@ const content = fs.readFileSync(filePath, 'utf8');
 
 const newContent = content.replace(
   /name: 'Arbitrum Sepolia'/g,
-  "name: '0G Network Testnet'"
+  "name: 'Stacks Testnet'"
 );
 
 fs.writeFileSync(filePath, newContent, 'utf8');

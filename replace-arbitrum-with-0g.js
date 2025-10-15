@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Script to replace Arbitrum references with 0G Network in frontend files
+ * Script to replace Arbitrum references with Stacks in frontend files
  * This script will replace Arbitrum network references while preserving technical/config references
  */
 
@@ -23,49 +23,49 @@ const FILE_EXTENSIONS = ['.js', '.jsx', '.ts', '.tsx'];
 // Patterns to replace (Arbitrum network references, not technical configs)
 const REPLACEMENT_PATTERNS = [
   // Network name references
-  { pattern: /Arbitrum\s+Sepolia/gi, replacement: '0G Network' },
-  { pattern: /Arbitrum\s+One/gi, replacement: '0G Network' },
-  { pattern: /Arbitrum\s+Network/gi, replacement: '0G Network' },
-  { pattern: /Arbitrum\s+Testnet/gi, replacement: '0G Network Testnet' },
-  { pattern: /Arbitrum\s+Mainnet/gi, replacement: '0G Network' },
+  { pattern: /Arbitrum\s+Sepolia/gi, replacement: 'Stacks' },
+  { pattern: /Arbitrum\s+One/gi, replacement: 'Stacks' },
+  { pattern: /Arbitrum\s+Network/gi, replacement: 'Stacks' },
+  { pattern: /Arbitrum\s+Testnet/gi, replacement: 'Stacks Testnet' },
+  { pattern: /Arbitrum\s+Mainnet/gi, replacement: 'Stacks' },
   
   // Simple Arbitrum references (but not in URLs or technical contexts)
-  { pattern: /(\s|^|"|'|>)Arbitrum(\s|$|"|'|<|\.|\,|\!|\?)/g, replacement: '$10G Network$2' },
-  { pattern: /"Arbitrum"/g, replacement: '"0G Network"' },
-  { pattern: /'Arbitrum'/g, replacement: "'0G Network'" },
-  { pattern: /`Arbitrum`/g, replacement: '`0G Network`' },
+  { pattern: /(\s|^|"|'|>)Arbitrum(\s|$|"|'|<|\.|\,|\!|\?)/g, replacement: '$1Stacks$2' },
+  { pattern: /"Arbitrum"/g, replacement: '"Stacks"' },
+  { pattern: /'Arbitrum'/g, replacement: "'Stacks'" },
+  { pattern: /`Arbitrum`/g, replacement: '`Stacks`' },
   
   // UI text and descriptions
-  { pattern: /on\s+Arbitrum/gi, replacement: 'on 0G Network' },
-  { pattern: /using\s+Arbitrum/gi, replacement: 'using 0G Network' },
-  { pattern: /with\s+Arbitrum/gi, replacement: 'with 0G Network' },
-  { pattern: /from\s+Arbitrum/gi, replacement: 'from 0G Network' },
-  { pattern: /to\s+Arbitrum/gi, replacement: 'to 0G Network' },
-  { pattern: /via\s+Arbitrum/gi, replacement: 'via 0G Network' },
+  { pattern: /on\s+Arbitrum/gi, replacement: 'on Stacks' },
+  { pattern: /using\s+Arbitrum/gi, replacement: 'using Stacks' },
+  { pattern: /with\s+Arbitrum/gi, replacement: 'with Stacks' },
+  { pattern: /from\s+Arbitrum/gi, replacement: 'from Stacks' },
+  { pattern: /to\s+Arbitrum/gi, replacement: 'to Stacks' },
+  { pattern: /via\s+Arbitrum/gi, replacement: 'via Stacks' },
   
   // Comments and descriptions
-  { pattern: /\/\/.*Arbitrum.*/g, replacement: (match) => match.replace(/Arbitrum/gi, '0G Network') },
-  { pattern: /\/\*.*Arbitrum.*\*\//g, replacement: (match) => match.replace(/Arbitrum/gi, '0G Network') },
+  { pattern: /\/\/.*Arbitrum.*/g, replacement: (match) => match.replace(/Arbitrum/gi, 'Stacks') },
+  { pattern: /\/\*.*Arbitrum.*\*\//g, replacement: (match) => match.replace(/Arbitrum/gi, 'Stacks') },
   
   // Specific UI patterns
-  { pattern: /Connected\s+to\s+Arbitrum/gi, replacement: 'Connected to 0G Network' },
-  { pattern: /Switch\s+to\s+Arbitrum/gi, replacement: 'Switch to 0G Network' },
-  { pattern: /Arbitrum\s+Casino/gi, replacement: '0G Network Casino' },
-  { pattern: /Casino.*Arbitrum/gi, replacement: 'Casino on 0G Network' },
+  { pattern: /Connected\s+to\s+Arbitrum/gi, replacement: 'Connected to Stacks' },
+  { pattern: /Switch\s+to\s+Arbitrum/gi, replacement: 'Switch to Stacks' },
+  { pattern: /Arbitrum\s+Casino/gi, replacement: 'Stacks Casino' },
+  { pattern: /Casino.*Arbitrum/gi, replacement: 'Casino on Stacks' },
   
   // Token and coin references (but preserve technical names)
-  { pattern: /Arbitrum\s+Coin/gi, replacement: '0G Network Token' },
-  { pattern: /Arbitrum\s+Token/gi, replacement: '0G Network Token' },
+  { pattern: /Arbitrum\s+Coin/gi, replacement: 'Stacks Token' },
+  { pattern: /Arbitrum\s+Token/gi, replacement: 'Stacks Token' },
   
   // Experience and gaming references
-  { pattern: /found\s+on\s+Arbitrum/gi, replacement: 'found on 0G Network' },
-  { pattern: /experience.*Arbitrum/gi, replacement: (match) => match.replace(/Arbitrum/gi, '0G Network') },
-  { pattern: /gaming.*Arbitrum/gi, replacement: (match) => match.replace(/Arbitrum/gi, '0G Network') },
+  { pattern: /found\s+on\s+Arbitrum/gi, replacement: 'found on Stacks' },
+  { pattern: /experience.*Arbitrum/gi, replacement: (match) => match.replace(/Arbitrum/gi, 'Stacks') },
+  { pattern: /gaming.*Arbitrum/gi, replacement: (match) => match.replace(/Arbitrum/gi, 'Stacks') },
   
   // Blockchain and network references
-  { pattern: /Arbitrum\s+blockchain/gi, replacement: '0G Network blockchain' },
-  { pattern: /Arbitrum\s+layer/gi, replacement: '0G Network layer' },
-  { pattern: /Layer.*Arbitrum/gi, replacement: (match) => match.replace(/Arbitrum/gi, '0G Network') },
+  { pattern: /Arbitrum\s+blockchain/gi, replacement: 'Stacks blockchain' },
+  { pattern: /Arbitrum\s+layer/gi, replacement: 'Stacks layer' },
+  { pattern: /Layer.*Arbitrum/gi, replacement: (match) => match.replace(/Arbitrum/gi, 'Stacks') },
 ];
 
 // Patterns to EXCLUDE (preserve these technical references)
@@ -210,7 +210,7 @@ function processDirectory(dirPath) {
  * Main execution
  */
 function main() {
-  console.log('🚀 Starting Arbitrum to 0G Network replacement...\n');
+  console.log('🚀 Starting Arbitrum to Stacks replacement...\n');
 
   TARGET_DIRS.forEach(dir => {
     console.log(`📁 Processing directory: ${dir}`);
@@ -221,7 +221,7 @@ function main() {
   console.log('📊 Summary:');
   console.log(`   Files processed: ${totalFilesProcessed}`);
   console.log(`   Total replacements: ${totalReplacements}`);
-  console.log('✅ Arbitrum to 0G Network replacement completed!');
+  console.log('✅ Arbitrum to Stacks replacement completed!');
   
   console.log('\n📝 Note: Technical configurations (URLs, chain IDs, configs) were preserved.');
   console.log('   Only user-facing text and network names were changed.');

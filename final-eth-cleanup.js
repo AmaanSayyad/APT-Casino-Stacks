@@ -15,16 +15,16 @@ const SPECIFIC_REPLACEMENTS = [
   { pattern: /valueEth/g, replacement: 'valueOg' },
   
   // Comments and strings that were missed
-  { pattern: /\/\/ .*ETH.*/g, replacement: (match) => match.replace(/ETH/g, 'OG') },
-  { pattern: /\/\* .*ETH.*\*\//g, replacement: (match) => match.replace(/ETH/g, 'OG') },
-  { pattern: /'ETH'/g, replacement: "'OG'" },
-  { pattern: /"ETH"/g, replacement: '"OG"' },
+  { pattern: /\/\/ .*ETH.*/g, replacement: (match) => match.replace(/ETH/g, 'STX') },
+  { pattern: /\/\* .*ETH.*\*\//g, replacement: (match) => match.replace(/ETH/g, 'STX') },
+  { pattern: /'ETH'/g, replacement: "'STX'" },
+  { pattern: /"ETH"/g, replacement: '"STX"' },
   
   // Specific patterns found
-  { pattern: /formatEther\(.*\)\s*ETH/g, replacement: (match) => match.replace('ETH', 'OG') },
-  { pattern: /(\d+\.?\d*)\s*ETH/g, replacement: '$1 OG' },
-  { pattern: /symbol:\s*'ETH'/g, replacement: "symbol: 'OG'" },
-  { pattern: /name:\s*'Ethereum'/g, replacement: "name: 'OG'" },
+  { pattern: /formatEther\(.*\)\s*ETH/g, replacement: (match) => match.replace('ETH', 'STX') },
+  { pattern: /(\d+\.?\d*)\s*ETH/g, replacement: '$1 STX' },
+  { pattern: /symbol:\s*'ETH'/g, replacement: "symbol: 'STX'" },
+  { pattern: /name:\s*'Ethereum'/g, replacement: "name: 'STX'" },
 ];
 
 function processFile(filePath) {

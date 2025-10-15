@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Script to replace ETH references with OG in frontend files
+ * Script to replace ETH references with STX in frontend files
  * This script will replace ETH token references while preserving ethers.js and Ethereum network references
  */
 
@@ -24,40 +24,40 @@ const FILE_EXTENSIONS = ['.js', '.jsx', '.ts', '.tsx'];
 const REPLACEMENT_PATTERNS = [
   // Currency/token references
   { pattern: /(\s|^|"|'|`|>)ETH(\s|$|"|'|`|<|\.|\,|\!|\?)/g, replacement: '$1OG$2' },
-  { pattern: /"ETH"/g, replacement: '"OG"' },
-  { pattern: /'ETH'/g, replacement: "'OG'" },
-  { pattern: /`ETH`/g, replacement: '`OG`' },
+  { pattern: /"ETH"/g, replacement: '"STX"' },
+  { pattern: /'ETH'/g, replacement: "'STX'" },
+  { pattern: /`ETH`/g, replacement: '`STX`' },
   
   // Balance and amount displays
-  { pattern: /(\d+\.?\d*)\s*ETH/g, replacement: '$1 OG' },
-  { pattern: /ETH\s*balance/gi, replacement: 'OG balance' },
-  { pattern: /ETH\s*amount/gi, replacement: 'OG amount' },
-  { pattern: /ETH\s*token/gi, replacement: 'OG token' },
-  { pattern: /ETH\s*price/gi, replacement: 'OG price' },
-  { pattern: /ETH\s*pool/gi, replacement: 'OG pool' },
-  { pattern: /ETH\s*APY/gi, replacement: 'OG APY' },
+  { pattern: /(\d+\.?\d*)\s*ETH/g, replacement: '$1 STX' },
+  { pattern: /ETH\s*balance/gi, replacement: 'STX balance' },
+  { pattern: /ETH\s*amount/gi, replacement: 'STX amount' },
+  { pattern: /ETH\s*token/gi, replacement: 'STX token' },
+  { pattern: /ETH\s*price/gi, replacement: 'STX price' },
+  { pattern: /ETH\s*pool/gi, replacement: 'STX pool' },
+  { pattern: /ETH\s*APY/gi, replacement: 'STX APY' },
   
   // UI text
-  { pattern: /Deposit\s+ETH/gi, replacement: 'Deposit OG' },
-  { pattern: /Withdraw\s+ETH/gi, replacement: 'Withdraw OG' },
-  { pattern: /Transfer\s+ETH/gi, replacement: 'Transfer OG' },
-  { pattern: /Send\s+ETH/gi, replacement: 'Send OG' },
-  { pattern: /Receive\s+ETH/gi, replacement: 'Receive OG' },
+  { pattern: /Deposit\s+ETH/gi, replacement: 'Deposit STX' },
+  { pattern: /Withdraw\s+ETH/gi, replacement: 'Withdraw STX' },
+  { pattern: /Transfer\s+ETH/gi, replacement: 'Transfer STX' },
+  { pattern: /Send\s+ETH/gi, replacement: 'Send STX' },
+  { pattern: /Receive\s+ETH/gi, replacement: 'Receive STX' },
   
   // Comments and descriptions
   { pattern: /(\s|^)ETH(\s+)(minimum|maximum|limit|fee)/gi, replacement: '$1OG$2$3' },
   { pattern: /(\s|^)ETH(\s+)(from|to|in|on)/gi, replacement: '$1OG$2$3' },
   
   // Specific patterns found in the codebase
-  { pattern: /symbol:\s*['"`]ETH['"`]/g, replacement: "symbol: 'OG'" },
-  { pattern: /name:\s*['"`]Ethereum['"`]/g, replacement: "name: 'OG'" },
-  { pattern: /Total\s+ETH\s+Pool/gi, replacement: 'Total OG Pool' },
-  { pattern: /ETH\s+Token\s+Performance/gi, replacement: 'OG Token Performance' },
-  { pattern: /invest\s+in\s+ETH/gi, replacement: 'invest in OG' },
-  { pattern: /Stake\s+ETH/gi, replacement: 'Stake OG' },
-  { pattern: /won\s+over\s+(\d+)\s+ETH/gi, replacement: 'won over $1 OG' },
-  { pattern: /borrow\s+ETH/gi, replacement: 'borrow OG' },
-  { pattern: /(\d+)\s+ETH\s+tokens/gi, replacement: '$1 OG tokens' },
+  { pattern: /symbol:\s*['"`]ETH['"`]/g, replacement: "symbol: 'STX'" },
+  { pattern: /name:\s*['"`]Ethereum['"`]/g, replacement: "name: 'STX'" },
+  { pattern: /Total\s+ETH\s+Pool/gi, replacement: 'Total STX Pool' },
+  { pattern: /ETH\s+Token\s+Performance/gi, replacement: 'STX Token Performance' },
+  { pattern: /invest\s+in\s+ETH/gi, replacement: 'invest in STX' },
+  { pattern: /Stake\s+ETH/gi, replacement: 'Stake STX' },
+  { pattern: /won\s+over\s+(\d+)\s+ETH/gi, replacement: 'won over $1 STX' },
+  { pattern: /borrow\s+ETH/gi, replacement: 'borrow STX' },
+  { pattern: /(\d+)\s+ETH\s+tokens/gi, replacement: '$1 STX tokens' },
 ];
 
 // Patterns to EXCLUDE (preserve these)
@@ -189,7 +189,7 @@ function processDirectory(dirPath) {
  * Main execution
  */
 function main() {
-  console.log('🚀 Starting ETH to OG replacement...\n');
+  console.log('🚀 Starting ETH to STX replacement...\n');
 
   TARGET_DIRS.forEach(dir => {
     console.log(`📁 Processing directory: ${dir}`);
@@ -200,7 +200,7 @@ function main() {
   console.log('📊 Summary:');
   console.log(`   Files processed: ${totalFilesProcessed}`);
   console.log(`   Total replacements: ${totalReplacements}`);
-  console.log('✅ ETH to OG replacement completed!');
+  console.log('✅ ETH to STX replacement completed!');
 }
 
 // Run the script

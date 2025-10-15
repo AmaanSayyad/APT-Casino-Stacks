@@ -1,17 +1,17 @@
 /**
- * 0G Galileo Testnet Configuration
- * Configuration for 0G Galileo testnet with OG token
+ * Stacks Testnet Testnet Configuration
+ * Configuration for Stacks Testnet testnet with STX token
  */
 
-// 0G Galileo Chain Configuration
+// Stacks Testnet Chain Configuration
 export const OG_GALILEO_CONFIG = {
   chainId: 16602,
   name: '0G-Galileo-Testnet',
   network: 'og-galileo-testnet',
   nativeCurrency: {
     decimals: 18,
-    name: 'OG',
-    symbol: 'OG',
+    name: 'STX',
+    symbol: 'STX',
   },
   rpcUrls: {
     default: {
@@ -29,18 +29,18 @@ export const OG_GALILEO_CONFIG = {
   },
   blockExplorers: {
     default: {
-      name: '0G Galileo Explorer',
+      name: 'Stacks Testnet Explorer',
       url: process.env.NEXT_PUBLIC_0G_GALILEO_EXPLORER || 'https://chainscan-galileo.0g.ai',
     },
   },
   testnet: true,
 };
 
-// 0G Galileo Tokens
+// Stacks Testnet Tokens
 export const OG_GALILEO_TOKENS = {
-  OG: {
-    symbol: 'OG',
-    name: 'OG Token',
+  STX: {
+    symbol: 'STX',
+    name: 'STX Token',
     decimals: 18,
     address: '0x0000000000000000000000000000000000000000',
     isNative: true,
@@ -49,13 +49,13 @@ export const OG_GALILEO_TOKENS = {
   }
 };
 
-// Casino configuration for 0G Galileo
+// Casino configuration for Stacks Testnet
 export const OG_GALILEO_CASINO_CONFIG = {
   // Deposit/Withdraw settings
-  minDeposit: '0.001', // 0.001 OG
-  maxDeposit: '100',   // 100 OG
-  minWithdraw: '0.001', // 0.001 OG
-  maxWithdraw: '100',   // 100 OG
+  minDeposit: '0.001', // 0.001 STX
+  maxDeposit: '100',   // 100 STX
+  minWithdraw: '0.001', // 0.001 STX
+  maxWithdraw: '100',   // 100 STX
   
   // Game settings (same as Arbitrum for consistency)
   games: {
@@ -86,14 +86,14 @@ export const OG_GALILEO_CASINO_CONFIG = {
   }
 };
 
-// Network switching helper for 0G Galileo
+// Network switching helper for Stacks Testnet
 export const switchToOGGalileo = async () => {
   if (typeof window === 'undefined' || !window.ethereum) {
     throw new Error('MetaMask not found');
   }
 
   try {
-    // Try to switch to 0G Galileo
+    // Try to switch to Stacks Testnet
     await window.ethereum.request({
       method: 'wallet_switchEthereumChain',
       params: [{ chainId: '0x40da' }], // 16602 in hex
@@ -107,8 +107,8 @@ export const switchToOGGalileo = async () => {
           chainId: '0x40da',
           chainName: '0G-Galileo-Testnet',
           nativeCurrency: {
-            name: 'OG',
-            symbol: 'OG',
+            name: 'STX',
+            symbol: 'STX',
             decimals: 18,
           },
           rpcUrls: ['https://evmrpc-testnet.0g.ai'],
