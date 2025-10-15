@@ -25,6 +25,7 @@ The traditional online gambling industry is plagued by several issues, including
 - **Provably Fair Gaming:** Utilising the **Pyth Entropy** on-chain randomness module, my platform ensures all game outcomes are 100% transparent and verifiably fair.  
 ![commit_and_reveal](https://github.com/user-attachments/assets/816436f9-b186-4a54-a466-7eae508fe55b)
 
+
 - **Flexible Withdrawal Policies:** Providing users with unrestricted access to their funds.  
 - **Transparent Bonus Schemes:** Clear and clean bonus terms without hidden traps.  
 - **True Asset Ownership:** Decentralised asset management ensures users have full control over their assets.  
@@ -38,6 +39,7 @@ The traditional online gambling industry is plagued by several issues, including
 - **On-Chain Randomness:** Utilizing **Pyth Entropy** on-chain randomness module to ensure provably fair game outcomes.
 <img width="1536" height="864" alt="355232251-6880e1cb-769c-4272-8b66-686a90abf3be" src="https://github.com/user-attachments/assets/f32cd05a-fbd0-43d7-8aae-cf2f7c7eb72c" />
 
+
 - **Decentralized Asset Management:** Users retain full control over their funds through secure and transparent blockchain transactions.  
 - **User-Friendly Interface:** An intuitive and secure interface for managing funds, placing bets, and interacting with games.  
 - **Diverse Game Selection:** A variety of fully on-chain games, including roulette, mines, plinko, and spin wheel. As a (POC) Proof of Concept, developed fully on-chain 4 games but similar model can be applied to introduce the new casino games to the platform.  
@@ -48,6 +50,7 @@ The traditional online gambling industry is plagued by several issues, including
 
 ## 🏗️ Architecture
 ![Image 16-10-25 at 12 17 AM](https://github.com/user-attachments/assets/ef66d928-3483-43d9-b105-41e322bd93ca)
+
 
 ### Network Stack
 ```
