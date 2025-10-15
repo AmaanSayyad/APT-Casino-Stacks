@@ -1,45 +1,55 @@
-# APT Casino - Mermaid Architecture Diagrams
+# Stacks Casino - Mermaid Architecture Diagrams
 
 ## 🏗️ System Architecture Overview
 
 ```mermaid
 graph TB
     subgraph Frontend["Frontend Layer"]
-        A[Next.js App] --> B[React Components]
-        B --> C[Three.js Games]
+        A[Next.js 14 App] --> B[React Components]
+        B --> C[Game Components]
         B --> D[Material-UI]
-        B --> E[RainbowKit Wallet]
+        B --> E[Dual Wallet System]
+        E --> E1[Stacks Wallet - Leather]
+        E --> E2[Ethereum Wallet - Wagmi]
     end
     
     subgraph State["State Management"]
         F[Redux Store] --> G[React Query]
-        G --> H[Local State]
+        G --> H[Stacks Context]
+        H --> I[Balance Management]
+        F --> J[Game State]
     end
     
     subgraph API["API Layer"]
-        I[Next.js API Routes] --> J[Pyth Entropy Endpoints]
-        I --> K[Deposit/Withdraw]
-        I --> L[Game Logic]
+        K[Next.js API Routes] --> L[Pyth Entropy API]
+        K --> M[Withdrawal API]
+        K --> N[Deposit Processing]
     end
     
-    subgraph Blockchain["Blockchain Layer"]
-        M[Arbitrum Sepolia] --> N[CasinoEntropyConsumer]
-        N --> O[Pyth Entropy]
-        O --> P[Pyth Network]
+    subgraph Blockchain["Dual Blockchain Layer"]
+        O[Stacks Network] --> P[STX Transactions]
+        P --> Q[Treasury Wallet]
+        Q --> R[Deposit/Withdrawal]
+        
+        S[Arbitrum Sepolia] --> T[Pyth Entropy Contract]
+        T --> U[Random Generation]
+        U --> V[Entropy Proofs]
     end
     
-    subgraph Data["Data Layer"]
-        Q[PostgreSQL] --> R[User Data]
-        S[Redis Cache] --> T[Session Data]
-        S --> U[Game State]
+    subgraph Storage["Data Storage"]
+        W[LocalStorage] --> X[User Balance]
+        W --> Y[Game History]
+        W --> Z[Transaction Records]
     end
     
     A --> F
-    B --> I
-    I --> M
-    I --> Q
-    I --> S
-    N --> I
+    B --> K
+    K --> O
+    K --> S
+    E1 --> O
+    E2 --> S
+    L --> T
+    M --> Q
 ```
 
 ## 🔄 Application Bootstrap Flow
@@ -50,422 +60,337 @@ sequenceDiagram
     participant B as Browser
     participant N as Next.js
     participant P as Providers
+    participant SW as StacksWallet
     participant W as Wagmi
-    participant R as RainbowKit
     
     U->>B: Access Application
     B->>N: Load App Router
     N->>P: Initialize Providers
-    P->>W: Setup Wagmi Config
-    W->>R: Initialize RainbowKit
-    R->>P: Wallet UI Ready
-    P->>N: Providers Ready
+    P->>W: Setup Wagmi (Arbitrum)
+    P->>SW: Setup Stacks Context
+    SW->>P: Stacks Ready
+    W->>P: Wagmi Ready
+    P->>N: All Providers Ready
     N->>B: Render Application
-    B->>U: Display UI
+    B->>U: Display Casino UI
 ```
 
-## 🔗 Wallet Connection Flow
+## 🔗 Dual Wallet Connection Flow
 
 ```mermaid
 flowchart TD
-    A[User Clicks Connect] --> B{Wallet Available?}
-    B -->|Yes| C[RainbowKit Modal]
-    B -->|No| D[Install Wallet Prompt]
+    A[User Visits Casino] --> B{Stacks Wallet Connected?}
+    B -->|No| C[Show Connect Button]
+    B -->|Yes| D[Load User Balance]
     
-    C --> E[Select Wallet Type]
-    E --> F[MetaMask]
-    E --> G[WalletConnect]
-    E --> H[Coinbase Wallet]
-    E --> I[Trust Wallet]
-    E --> J[Other Wallets]
+    C --> E[User Clicks Connect]
+    E --> F[Leather Wallet Popup]
+    F --> G{User Approves?}
+    G -->|Yes| H[Wallet Connected]
+    G -->|No| I[Connection Failed]
     
-    F --> K[Request Connection]
-    G --> K
-    H --> K
-    I --> K
-    J --> K
+    H --> J[Load STX Balance]
+    J --> K[Load Casino Balance]
+    K --> L[Enable Gaming]
     
-    K --> L{Network Check}
-    L -->|Arbitrum Sepolia| M[Connection Success]
-    L -->|Wrong Network| N[Switch Network]
+    L --> M{Pyth Entropy Needed?}
+    M -->|Yes| N[Connect Ethereum Wallet]
+    M -->|No| O[Use Fallback Randomness]
     
-    N --> O{User Approves?}
-    O -->|Yes| M
-    O -->|No| P[Connection Failed]
+    N --> P[MetaMask Connection]
+    P --> Q[Arbitrum Sepolia]
+    Q --> R[Enhanced Randomness]
     
-    M --> Q[Update App State]
-    Q --> R[Enable Game Features]
+    I --> S[Show Error Message]
+    S --> C
 ```
 
-## 🎲 Pyth Entropy Integration Architecture
-
-```mermaid
-graph LR
-    subgraph Frontend["Frontend"]
-        A[Game Component] --> B[Pyth Entropy Request]
-    end
-    
-    subgraph Contract["Smart Contract"]
-        C[CasinoEntropyConsumer] --> D[request]
-        D --> E[Pyth Entropy Contract]
-    end
-    
-    subgraph Pyth["Pyth Network"]
-        F[Pyth Provider] --> G[Generate Entropy]
-        G --> H[Entropy Proof]
-    end
-    
-    subgraph Callback["Callback Flow"]
-        I[entropyCallback] --> J[Update Game State]
-        J --> K[Emit Events]
-    end
-    
-    B --> C
-    E --> F
-    H --> I
-    K --> A
-```
-
-## 🎮 Game Execution Flow
+## 💰 STX Deposit Flow
 
 ```mermaid
 sequenceDiagram
     participant U as User
+    participant UI as Frontend
+    participant L as Leather Wallet
+    participant S as Stacks Network
+    participant T as Treasury
+    participant API as Backend API
+    
+    U->>UI: Click Deposit STX
+    UI->>U: Show Deposit Modal
+    U->>UI: Enter Amount
+    UI->>L: Request STX Transfer
+    L->>U: Show Transaction Details
+    U->>L: Confirm Transaction
+    L->>S: Broadcast Transaction
+    S->>T: Transfer STX to Treasury
+    S->>L: Transaction Confirmed
+    L->>UI: Transaction Success
+    UI->>API: Process Deposit
+    API->>UI: Update Balance
+    UI->>U: Show Success + New Balance
+```
+
+## 💸 STX Withdrawal Flow
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant UI as Frontend
+    participant API as Withdrawal API
+    participant T as Treasury Wallet
+    participant S as Stacks Network
+    participant UW as User Wallet
+    
+    U->>UI: Click Withdraw
+    UI->>U: Show Withdrawal Modal
+    U->>UI: Confirm Withdrawal
+    UI->>API: Request Withdrawal
+    API->>T: Create STX Transaction
+    T->>S: Broadcast Transaction
+    S->>UW: Transfer STX
+    S->>API: Transaction Confirmed
+    API->>UI: Withdrawal Success
+    UI->>U: Update Balance to 0
+```
+
+## 🎲 Game Flow with Pyth Entropy
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant G as Game Component
+    participant API as Entropy API
+    participant P as Pyth Contract
+    participant A as Arbitrum
     participant UI as Game UI
-    participant API as API Route
-    participant SC as Smart Contract
-    participant PE as Pyth Entropy
-    participant DB as Database
     
-    U->>UI: Start Game
-    UI->>API: POST /api/generate-entropy
-    API->>SC: request(userRandomNumber)
-    SC->>PE: Request Entropy
-    
-    Note over PE: Generate Cryptographic Entropy
-    
-    PE->>SC: entropyCallback()
-    SC->>API: Event: EntropyFulfilled
-    API->>DB: Store Game Result
-    API->>UI: Game Result
-    UI->>U: Display Outcome
+    U->>G: Place Bet
+    G->>API: Request Random Number
+    API->>P: Call requestV2()
+    P->>A: Create Transaction
+    A->>P: Transaction Confirmed
+    P->>API: Return Request ID
+    API->>P: Get Random Value
+    P->>API: Return Random + Proof
+    API->>G: Send Result + Proof
+    G->>UI: Calculate Game Outcome
+    UI->>U: Show Result + Proof Link
 ```
 
-## 🏗️ Smart Contract Deployment Flow
-
-```mermaid
-flowchart TD
-    A[Environment Setup] --> B[Load .env.local]
-    B --> C[Hardhat Compilation]
-    C --> D[Deploy Script]
-    
-    D --> E{Pyth Entropy Setup?}
-    E -->|No| F[Configure Pyth Entropy]
-    E -->|Yes| G[Use Existing Config]
-    
-    F --> H[Set Provider Address]
-    G --> I[Deploy CasinoEntropyConsumer]
-    H --> I
-    
-    I --> J[Verify on Arbiscan]
-    J --> K[Set Treasury Address]
-    K --> L[Save Deployment Info]
-    
-    L --> M[Test Entropy Function]
-    M --> N{Test Success?}
-    N -->|Yes| O[Deployment Complete]
-    N -->|No| P[Debug & Retry]
-```
-
-## 🎯 Game-Specific Flows
-
-### Mines Game Flow
-```mermaid
-stateDiagram-v2
-    [*] --> GridSetup
-    GridSetup --> BetPlacement
-    BetPlacement --> EntropyRequest
-    EntropyRequest --> MineGeneration
-    MineGeneration --> GameActive
-    
-    GameActive --> TileClick
-    TileClick --> SafeTile: Safe
-    TileClick --> MineTile: Mine Hit
-    
-    SafeTile --> ContinueGame: Continue
-    SafeTile --> CashOut: Cash Out
-    
-    ContinueGame --> GameActive
-    CashOut --> GameEnd
-    MineTile --> GameEnd
-    
-    GameEnd --> [*]
-```
-
-### Plinko Game Flow
-```mermaid
-graph TD
-    A[Drop Ball] --> B[Physics Engine]
-    B --> C[Pyth Entropy]
-    C --> D[Peg Collisions]
-    D --> E[Ball Path Calculation]
-    E --> F[Multiplier Zone]
-    F --> G[Payout Calculation]
-    
-    subgraph Physics["Physics Simulation"]
-        H[Matter.js] --> I[Gravity]
-        I --> J[Collision Detection]
-        J --> K[Bounce Physics]
-    end
-    
-    subgraph Visual["Visual Rendering"]
-        L[Three.js] --> M[3D Ball]
-        M --> N[Peg Animation]
-        N --> O[Trail Effects]
-    end
-    
-    B --> H
-    E --> L
-```
-
-### Roulette Game Flow
-```mermaid
-flowchart LR
-    A[Place Bets] --> B[Multiple Bet Types]
-    B --> C[Red/Black]
-    B --> D[Odd/Even]
-    B --> E[Numbers]
-    B --> F[Columns/Dozens]
-    
-    C --> G[Spin Wheel]
-    D --> G
-    E --> G
-    F --> G
-    
-    G --> H[Pyth Entropy Random 0-36]
-    H --> I[Determine Winners]
-    I --> J[Calculate Payouts]
-    J --> K[Update Balances]
-```
-
-## 🔐 Security & Access Control
+## 🎮 Plinko Game Architecture
 
 ```mermaid
 graph TB
-    subgraph Access["Access Control Layers"]
-        A[Public Functions] --> B[User Interface]
-        C[Treasury Functions] --> D[Game Operations]
-        E[Owner Functions] --> F[Admin Operations]
+    subgraph PlinkoGame["Plinko Game Component"]
+        A[Game Controls] --> B[Ball Physics]
+        B --> C[Peg Collision]
+        C --> D[Path Calculation]
+        D --> E[Multiplier Result]
     end
     
-    subgraph Contract["Smart Contract Security"]
-        G[onlyTreasury Modifier] --> H[request]
-        I[onlyOwner Modifier] --> J[updateTreasury]
-        I --> K[updateEntropyConfig]
-        I --> L[withdrawFees]
+    subgraph Randomness["Randomness Generation"]
+        F[Pyth Entropy] --> G[Ball Direction]
+        G --> H[Bounce Physics]
+        H --> I[Final Position]
     end
     
-    subgraph Frontend["Frontend Security"]
-        M[Wallet Verification] --> N[Network Validation]
-        N --> O[Transaction Signing]
-        O --> P[Gas Estimation]
+    subgraph Rendering["3D Rendering"]
+        J[Three.js Scene] --> K[Ball Animation]
+        K --> L[Peg Rendering]
+        L --> M[Multiplier Display]
     end
     
-    D --> G
-    F --> I
-    B --> M
+    A --> F
+    E --> J
+    I --> E
+```
+
+## 🏦 Treasury Management System
+
+```mermaid
+graph TB
+    subgraph Treasury["Treasury Wallet System"]
+        A[Stacks Treasury] --> B[STZ2YCW72SDSCVYQKEPC3PNQ7J69EFTFERHEPC9]
+        B --> C[Deposit Processing]
+        B --> D[Withdrawal Processing]
+        
+        E[Ethereum Treasury] --> F[0xb424d2369F07b925D1218B08e56700AF5928287b]
+        F --> G[Pyth Entropy Fees]
+        F --> H[Gas Management]
+    end
+    
+    subgraph Security["Security Measures"]
+        I[Private Key Management] --> J[Environment Variables]
+        J --> K[Server-side Only]
+        K --> L[No Client Exposure]
+    end
+    
+    subgraph Monitoring["Balance Monitoring"]
+        M[STX Balance Check] --> N[Auto-refill Alerts]
+        O[ETH Balance Check] --> P[Gas Fee Monitoring]
+    end
+    
+    C --> I
+    D --> I
+    G --> I
+```
+
+## 🔐 Security Architecture
+
+```mermaid
+graph TB
+    subgraph ClientSide["Client-Side Security"]
+        A[Wallet Connection] --> B[User Signature Required]
+        B --> C[Transaction Approval]
+        C --> D[No Private Key Storage]
+    end
+    
+    subgraph ServerSide["Server-Side Security"]
+        E[Environment Variables] --> F[Private Key Protection]
+        F --> G[API Rate Limiting]
+        G --> H[Input Validation]
+    end
+    
+    subgraph Blockchain["Blockchain Security"]
+        I[Stacks Network] --> J[Transaction Immutability]
+        K[Pyth Entropy] --> L[Cryptographic Randomness]
+        L --> M[Verifiable Proofs]
+    end
+    
+    subgraph Verification["Proof Verification"]
+        N[Entropy Proof] --> O[Request ID]
+        O --> P[Sequence Number]
+        P --> Q[Transaction Hash]
+        Q --> R[Arbiscan Verification]
+    end
+    
+    A --> E
+    E --> I
+    I --> N
 ```
 
 ## 📊 Data Flow Architecture
 
 ```mermaid
 graph LR
-    subgraph Actions["User Actions"]
-        A[Connect Wallet] --> B[Select Game]
+    subgraph Input["User Input"]
+        A[Wallet Connection] --> B[Deposit STX]
         B --> C[Place Bet]
         C --> D[Game Interaction]
     end
     
-    subgraph State["State Management"]
-        E[Redux Store] --> F[Global State]
-        G[React Query] --> H[Server State]
-        I[Local State] --> J[Component State]
+    subgraph Processing["Data Processing"]
+        E[Balance Update] --> F[Random Generation]
+        F --> G[Game Logic]
+        G --> H[Result Calculation]
     end
     
-    subgraph API["API Layer"]
-        K[Next.js Routes] --> L[Pyth Entropy Endpoints]
-        K --> M[Game Logic]
-        K --> N[User Management]
+    subgraph Storage["Data Storage"]
+        I[LocalStorage] --> J[Redux Store]
+        J --> K[Component State]
+        K --> L[UI Updates]
     end
     
-    subgraph Persistence["Data Persistence"]
-        O[PostgreSQL] --> P[User Data]
-        O --> Q[Game History]
-        R[Redis] --> S[Session Cache]
-        R --> T[Game State]
+    subgraph Output["User Output"]
+        M[Balance Display] --> N[Game Results]
+        N --> O[Transaction History]
+        O --> P[Proof Links]
     end
     
-    D --> E
-    E --> K
-    K --> O
-    K --> R
+    A --> E
+    B --> E
+    C --> F
+    D --> G
+    E --> I
+    F --> I
+    G --> I
+    H --> M
 ```
 
-## 🔄 Request-Response Cycle
-
-```mermaid
-sequenceDiagram
-    participant U as User
-    participant F as Frontend
-    participant A as API
-    participant S as Smart Contract
-    participant PE as Pyth Entropy
-    participant D as Database
-    
-    U->>F: Game Action
-    F->>A: API Request
-    A->>S: Contract Call
-    S->>PE: Entropy Request
-    
-    Note over PE: Generate Entropy
-    
-    PE->>S: entropyCallback
-    S->>A: Event Emission
-    A->>D: Store Result
-    A->>F: Response
-    F->>U: Update UI
-```
-
-## 🔧 Development Workflow
-
-```mermaid
-flowchart TD
-    A[Local Development] --> B[Hot Reload]
-    B --> C[Component Changes]
-    C --> D[Contract Changes]
-    
-    D --> E[Hardhat Compile]
-    E --> F[Local Testing]
-    F --> G{Tests Pass?}
-    
-    G -->|No| H[Fix Issues]
-    H --> E
-    G -->|Yes| I[Commit Changes]
-    
-    I --> J[Push to GitHub]
-    J --> K[CI/CD Pipeline]
-    K --> L[Automated Tests]
-    
-    L --> M{All Tests Pass?}
-    M -->|No| N[Fix & Retry]
-    M -->|Yes| O[Deploy to Staging]
-    
-    O --> P[Manual Testing]
-    P --> Q{Ready for Prod?}
-    Q -->|No| R[More Changes]
-    Q -->|Yes| S[Production Deploy]
-    
-    R --> A
-    N --> A
-```
-
-## 📈 Performance Monitoring
-
-```mermaid
-graph LR
-    subgraph Frontend["Frontend Metrics"]
-        A[Page Load Time] --> B[Bundle Size]
-        B --> C[User Interactions]
-        C --> D[Error Rates]
-    end
-    
-    subgraph API["API Metrics"]
-        E[Response Time] --> F[Throughput]
-        F --> G[Error Rates]
-        G --> H[Cache Hit Ratio]
-    end
-    
-    subgraph Blockchain["Blockchain Metrics"]
-        I[Gas Usage] --> J[Transaction Time]
-        J --> K[Pyth Entropy Latency]
-        K --> L[Success Rates]
-    end
-    
-    subgraph Database["Database Metrics"]
-        M[Query Performance] --> N[Connection Pool]
-        N --> O[Cache Performance]
-        O --> P[Storage Usage]
-    end
-    
-    D --> Q[Monitoring Dashboard]
-    H --> Q
-    L --> Q
-    P --> Q
-```
-
-## 🔮 Pyth Entropy Service Integration
+## 🌐 Network Integration
 
 ```mermaid
 graph TB
-    subgraph Frontend["Frontend Layer"]
-        A[Game Component] --> B[PythEntropyService]
-        B --> C[API Call]
+    subgraph StacksNetwork["Stacks Network Integration"]
+        A[Stacks Testnet] --> B[STX Transactions]
+        B --> C[Wallet Integration]
+        C --> D[Balance Management]
+        
+        E[Stacks Mainnet] --> F[Production Ready]
+        F --> G[Real STX Value]
     end
     
-    subgraph API["API Layer"]
-        D[Next.js API Route] --> E[Pyth Entropy Service]
-        E --> F[Hardhat Script]
+    subgraph ArbitrumNetwork["Arbitrum Integration"]
+        H[Arbitrum Sepolia] --> I[Pyth Entropy Contract]
+        I --> J[Random Generation]
+        J --> K[Proof Generation]
+        
+        L[Arbitrum One] --> M[Production Entropy]
+        M --> N[Lower Gas Costs]
     end
     
-    subgraph Contract["Smart Contract Layer"]
-        G[CasinoEntropyConsumer] --> H[request Function]
-        H --> I[Pyth Entropy Contract]
+    subgraph CrossChain["Cross-Chain Communication"]
+        O[Frontend Coordination] --> P[Dual Provider Management]
+        P --> Q[Network Switching]
+        Q --> R[Seamless UX]
     end
     
-    subgraph Pyth["Pyth Network"]
-        J[Pyth Provider] --> K[Entropy Generation]
-        K --> L[Callback to Contract]
-    end
-    
-    subgraph Processing["Result Processing"]
-        M[Game Processors] --> N[MinesResultProcessor]
-        M --> O[PlinkoResultProcessor]
-        M --> P[RouletteResultProcessor]
-        M --> Q[WheelResultProcessor]
-    end
-    
-    C --> D
-    F --> G
-    I --> J
-    L --> M
-    N --> A
-    O --> A
-    P --> A
-    Q --> A
+    A --> O
+    H --> O
+    E --> O
+    L --> O
 ```
 
-## 🎯 User Journey Flow
+## 🎯 Game State Management
 
 ```mermaid
-journey
-    title User Gaming Experience
-    section Discovery
-      Visit Website: 5: User
-      Browse Games: 4: User
-      Read About Fairness: 3: User
-    section Onboarding
-      Connect Wallet: 3: User
-      Switch Network: 2: User
-      Verify Connection: 4: User
-    section Gaming
-      Select Game: 5: User
-      Place Bet: 4: User
-      Wait for Result: 2: User
-      See Outcome: 5: User
-    section Continuation
-      Play Again: 4: User
-      Try Different Game: 3: User
-      Cash Out: 4: User
+stateDiagram-v2
+    [*] --> WalletDisconnected
+    WalletDisconnected --> WalletConnecting : Connect Wallet
+    WalletConnecting --> WalletConnected : Success
+    WalletConnecting --> WalletDisconnected : Failed
+    
+    WalletConnected --> BalanceLoading : Load Balance
+    BalanceLoading --> BalanceLoaded : Success
+    BalanceLoading --> BalanceError : Failed
+    
+    BalanceLoaded --> GameReady : Sufficient Balance
+    BalanceLoaded --> InsufficientFunds : Low Balance
+    
+    GameReady --> BettingPhase : Start Game
+    BettingPhase --> RandomnessRequested : Place Bet
+    RandomnessRequested --> RandomnessReceived : Entropy Generated
+    RandomnessReceived --> GameResult : Calculate Outcome
+    GameResult --> BalanceUpdated : Update Balance
+    BalanceUpdated --> GameReady : Continue Playing
+    
+    InsufficientFunds --> DepositModal : Deposit STX
+    DepositModal --> BalanceLoading : Deposit Success
+    
+    BalanceUpdated --> WithdrawalModal : Withdraw Request
+    WithdrawalModal --> WalletDisconnected : Withdrawal Success
 ```
 
-This comprehensive set of Mermaid diagrams provides visual representations of all major architectural components and flows in the APT Casino application, making it easier to understand the complex interactions between different system layers. The diagrams now accurately reflect the current Pyth Entropy integration for random number generation instead of Pyth Entropy.
+---
+
+## 📝 Diagram Usage Notes
+
+### Viewing Diagrams
+- Copy any mermaid code block
+- Paste into [Mermaid Live Editor](https://mermaid.live/)
+- Or use VS Code with Mermaid extension
+
+### Updating Diagrams
+- Modify mermaid syntax as needed
+- Test in Mermaid Live Editor
+- Update this file with changes
+
+### Integration
+- These diagrams document the current architecture
+- Update when making significant system changes
+- Use for onboarding new developers
+
+---
+
+**Built with ❤️ for Stacks Network** 🚀
