@@ -15,15 +15,15 @@ const WheelHistory = ({ gameHistory = [] }) => {
    // Open Arbiscan link for transaction hash
    const openArbiscan = (hash) => {
     if (hash && hash !== 'unknown') {
-      const network = process.env.NEXT_PUBLIC_NETWORK || 'flow-testnet';
+      const network = process.env.NEXT_PUBLIC_NETWORK || 'arbitrum-sepolia';
       let explorerUrl;
       
-      if (network === 'flow-testnet') {
-        explorerUrl = `https://testnet.arbiscan.io/tx/${hash}`;
-      } else if (network === 'flow-one') {
+      if (network === 'arbitrum-sepolia') {
+        explorerUrl = `https://sepolia.arbiscan.io/tx/${hash}`;
+      } else if (network === 'arbitrum-one') {
         explorerUrl = `https://arbiscan.io/tx/${hash}`;
       } else {
-        explorerUrl = `https://testnet.etherscan.io/tx/${hash}`;
+        explorerUrl = `https://sepolia.etherscan.io/tx/${hash}`;
       }
       
       window.open(explorerUrl, '_blank');
@@ -166,7 +166,7 @@ const WheelHistory = ({ gameHistory = [] }) => {
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap'
               }}>
-                {totalVolume.toFixed(5)} FLOW
+                {totalVolume.toFixed(5)} OG
               </Typography>
               <Box 
                 sx={{ 
@@ -202,7 +202,7 @@ const WheelHistory = ({ gameHistory = [] }) => {
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap'
               }}>
-                {biggestWin.toFixed(5)} FLOW
+                {biggestWin.toFixed(5)} OG
               </Typography>
               <FaTrophy color="#FFA500" />
             </Box>
@@ -465,7 +465,7 @@ const WheelHistory = ({ gameHistory = [] }) => {
                   borderBottom: '1px solid rgba(104, 29, 219, 0.2)'
                 }}
               >
-                Flow VRF
+                Entropy Proof
               </TableCell>
             </TableRow>
           </TableHead>
@@ -522,7 +522,7 @@ const WheelHistory = ({ gameHistory = [] }) => {
                           whiteSpace: 'nowrap'
                         }}
                       >
-                            {item.betAmount} FLOW
+                            {item.betAmount} OG
                       </Typography>
                       <Image src="/coin.png" width={16} height={16} alt="coin" />
                     </Box>
@@ -553,7 +553,7 @@ const WheelHistory = ({ gameHistory = [] }) => {
                           whiteSpace: 'nowrap'
                         }}
                       >
-                            {item.payout} FLOW
+                            {item.payout} OG
                       </Typography>
                       <Image src="/coin.png" width={16} height={16} alt="coin" />
                     </Box>
@@ -572,14 +572,12 @@ const WheelHistory = ({ gameHistory = [] }) => {
                       borderBottom: '1px solid rgba(104, 29, 219, 0.1)'
                     }}
                   >
-                    {(item.flowVRF || item.entropyProof) ? (
+                    {item.entropyProof ? (
                       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                           <Chip 
                             icon={<FaCheck size={10} />}
-                            label={item.flowVRF?.transactionId ? 
-                                  `TX: ${item.flowVRF.transactionId.slice(0, 8)}...` : 
-                                  item.entropyProof?.sequenceNumber ? 
+                            label={item.entropyProof.sequenceNumber ? 
                                   `#${item.entropyProof.sequenceNumber}` : 
                                   'N/A'
                                 }
@@ -598,33 +596,28 @@ const WheelHistory = ({ gameHistory = [] }) => {
                           />
                           <Button
                             onClick={() => {
-                              if (item.flowVRF?.transactionId) {
-                                window.open(`https://testnet.flowscan.io/tx/${item.flowVRF.transactionId}`, '_blank');
+                              if (item.entropyProof.transactionHash) {
+                                window.open(`https://entropy-explorer.pyth.network/?chain=arbitrum-sepolia&search=${item.entropyProof.transactionHash}`, '_blank');
                               }
-                              // Remove Pyth Explorer fallback - only open if we have Flow transaction
                             }}
-                            disabled={!item.flowVRF?.transactionId}
                             size="small"
                             startIcon={<FaExternalLinkAlt size={10} />}
                             sx={{ 
-                              color: item.flowVRF?.transactionId ? '#681DDB' : 'rgba(255,255,255,0.3)',
+                              color: '#681DDB',
                               fontSize: '0.7rem',
                               minWidth: 'auto',
                               p: 0,
                               '&:hover': {
                                 backgroundColor: 'transparent',
-                                textDecoration: item.flowVRF?.transactionId ? 'underline' : 'none',
-                              },
-                              '&:disabled': {
-                                color: 'rgba(255,255,255,0.3)',
+                                textDecoration: 'underline',
                               }
                             }}
                           >
-                            {item.flowVRF?.transactionId ? 'Flow VRF' : 'Loading...'}
+                            Entropy
                           </Button>
                         </Box>
                         <Typography variant="caption" color="rgba(255,255,255,0.5)">
-                          Flow VRF
+                          Pyth Entropy
                         </Typography>
                       </Box>
                     ) : (

@@ -12,15 +12,15 @@ const GameHistory = ({ hotNumbers, coldNumbers, recentGames = [] }) => {
   
   const openArbiscan = (txHash) => {
     if (txHash) {
-      const network = process.env.NEXT_PUBLIC_NETWORK || 'flow-testnet';
+      const network = process.env.NEXT_PUBLIC_NETWORK || 'arbitrum-sepolia';
       let explorerUrl;
       
-      if (network === 'flow-testnet') {
-        explorerUrl = `https://testnet.arbiscan.io/tx/${txHash}`;
-      } else if (network === 'flow-one') {
+      if (network === 'arbitrum-sepolia') {
+        explorerUrl = `https://sepolia.arbiscan.io/tx/${txHash}`;
+      } else if (network === 'arbitrum-one') {
         explorerUrl = `https://arbiscan.io/tx/${txHash}`;
       } else {
-        explorerUrl = `https://testnet.etherscan.io/tx/${txHash}`;
+        explorerUrl = `https://sepolia.etherscan.io/tx/${txHash}`;
       }
       
       window.open(explorerUrl, '_blank');

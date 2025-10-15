@@ -61,17 +61,17 @@ export const bettingTableData = {
 
 export const gameStatistics = {
   totalBets: '956,421',
-      totalVolume: '4.7M FLOW',
-    avgBetSize: '1.85 FLOW',
-    maxWin: '1,217.50 FLOW'
+      totalVolume: '4.7M OG',
+    avgBetSize: '1.85 OG',
+    maxWin: '1,217.50 OG'
 };
 
 export const recentBigWins = [
-      { player: "CryptoMiner", amount: "1,217.50 FLOW", time: "3m ago", config: "10 mines" },
-    { player: "DiamondHands", amount: "892.50 FLOW", time: "10m ago", config: "5 mines" },
-    { player: "GemHunter", amount: "653.00 FLOW", time: "22m ago", config: "3 mines" },
-    { player: "RiskTaker", amount: "437.00 FLOW", time: "45m ago", config: "3 mines" },
-    { player: "TreasureSeeker", amount: "381.50 FLOW", time: "1h ago", config: "1 mine" }
+      { player: "CryptoMiner", amount: "1,217.50 OG", time: "3m ago", config: "10 mines" },
+    { player: "DiamondHands", amount: "892.50 OG", time: "10m ago", config: "5 mines" },
+    { player: "GemHunter", amount: "653.00 OG", time: "22m ago", config: "3 mines" },
+    { player: "RiskTaker", amount: "437.00 OG", time: "45m ago", config: "3 mines" },
+    { player: "TreasureSeeker", amount: "381.50 OG", time: "1h ago", config: "1 mine" }
 ];
 
 export const winProbabilities = [

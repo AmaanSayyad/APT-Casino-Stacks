@@ -5,14 +5,14 @@ import { FaExchangeAlt } from 'react-icons/fa';
 const SUPPORTED_NETWORKS = {
   ARBITRUM_SEPOLIA: {
     chainId: '0x66eee', // 421614 in decimal
-    chainName: 'Flow Testnet',
+    chainName: '0G Network',
     nativeCurrency: {
-      name: 'Flow',
-      symbol: 'FLOW',
+      name: '0G Network',
+      symbol: 'OG',
       decimals: 18
     },
-    rpcUrls: ['https://testnet-rollup.flow.io/rpc'],
-    blockExplorerUrls: ['https://testnet.arbiscan.io']
+    rpcUrls: ['https://sepolia-rollup.arbitrum.io/rpc'],
+    blockExplorerUrls: ['https://sepolia.arbiscan.io']
   }
 };
 
@@ -39,22 +39,22 @@ const NetworkSwitcher = () => {
       return;
     }
 
-    if (!window.flow) {
-      console.log('No flow provider found');
+    if (!window.ethereum) {
+      console.log('No ethereum provider found');
       setError('Please install MetaMask or another Web3 wallet');
       return;
     }
 
     try {
-      const chainId = await window.flow.request({ method: 'eth_chainId' });
+      const chainId = await window.ethereum.request({ method: 'eth_chainId' });
       console.log('Detected Chain ID:', chainId);
 
       // Convert chainIds to lowercase for comparison
-      const arbitrumTestnetChainId = SUPPORTED_NETWORKS.ARBITRUM_SEPOLIA.chainId.toLowerCase();
+      const arbitrumSepoliaChainId = SUPPORTED_NETWORKS.ARBITRUM_SEPOLIA.chainId.toLowerCase();
       const currentChainId = chainId.toLowerCase();
 
-      if (currentChainId === arbitrumTestnetChainId) {
-        console.log('Setting network to Flow Testnet');
+      if (currentChainId === arbitrumSepoliaChainId) {
+        console.log('Setting network to 0G Network');
         setCurrentNetwork('ARBITRUM_SEPOLIA');
       } else {
         console.log('Unsupported network detected:', chainId);
@@ -71,7 +71,7 @@ const NetworkSwitcher = () => {
     setError(null);
     handleClose();
 
-    if (!window.flow) {
+    if (!window.ethereum) {
       setError('Please install MetaMask or another Web3 wallet');
       setLoading(false);
       return;
@@ -83,7 +83,7 @@ const NetworkSwitcher = () => {
     try {
       // Try switching to the network
       try {
-        await window.flow.request({
+        await window.ethereum.request({
           method: 'wallet_switchEthereumChain',
           params: [{ chainId: network.chainId }],
         });
@@ -94,7 +94,7 @@ const NetworkSwitcher = () => {
         // This error code indicates that the chain has not been added to MetaMask
         if (switchError.code === 4902) {
           try {
-            await window.flow.request({
+            await window.ethereum.request({
               method: 'wallet_addEthereumChain',
               params: [network],
             });
@@ -122,21 +122,21 @@ const NetworkSwitcher = () => {
     checkCurrentNetwork();
 
     // Listen for network changes
-    if (typeof window !== 'undefined' && window.flow) {
-      window.flow.on('chainChanged', (chainId) => {
+    if (typeof window !== 'undefined' && window.ethereum) {
+      window.ethereum.on('chainChanged', (chainId) => {
         console.log('Chain changed to:', chainId);
         checkCurrentNetwork();
       });
       
       // Check network when wallet is connected
-      window.flow.on('connect', () => {
+      window.ethereum.on('connect', () => {
         console.log('Wallet connected');
         checkCurrentNetwork();
       });
 
       return () => {
-        window.flow.removeListener('chainChanged', checkCurrentNetwork);
-        window.flow.removeListener('connect', checkCurrentNetwork);
+        window.ethereum.removeListener('chainChanged', checkCurrentNetwork);
+        window.ethereum.removeListener('connect', checkCurrentNetwork);
       };
     }
   }, []);

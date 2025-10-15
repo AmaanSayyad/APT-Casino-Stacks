@@ -6,29 +6,29 @@
 export const PYTH_ENTROPY_CONFIG = {
   // Supported networks
   NETWORKS: {
-    'flow-testnet': {
+    'arbitrum-sepolia': {
       chainId: 421614,
-      name: 'Flow Testnet',
-      rpcUrl: process.env.NEXT_PUBLIC_ARBITRUM_SEPOLIA_RPC || 'https://testnet-rollup.flow.io/rpc',
+      name: 'Arbitrum Sepolia',
+      rpcUrl: process.env.NEXT_PUBLIC_ARBITRUM_SEPOLIA_RPC || 'https://sepolia-rollup.arbitrum.io/rpc',
       entropyContract: process.env.NEXT_PUBLIC_PYTH_ENTROPY_CONTRACT || '0x549ebba8036ab746611b4ffa1423eb0a4df61440', // Official Pyth Entropy contract
       entropyProvider: process.env.NEXT_PUBLIC_PYTH_ENTROPY_PROVIDER || '0x6CC14824Ea2918f5De5C2f75A9Da968ad4BD6344', // Official Pyth Entropy provider
-      explorerUrl: process.env.NEXT_PUBLIC_ARBITRUM_SEPOLIA_EXPLORER || 'https://testnet.arbiscan.io',
+      explorerUrl: process.env.NEXT_PUBLIC_ARBITRUM_SEPOLIA_EXPLORER || 'https://sepolia.arbiscan.io',
       entropyExplorerUrl: 'https://entropy-explorer.pyth.network'
     },
-    'flow-one': {
+    'arbitrum-one': {
       chainId: 42161,
-      name: 'Flow One',
-      rpcUrl: process.env.NEXT_PUBLIC_ARBITRUM_ONE_RPC || 'https://arb1.flow.io/rpc',
+      name: 'Arbitrum One',
+      rpcUrl: process.env.NEXT_PUBLIC_ARBITRUM_ONE_RPC || 'https://arb1.arbitrum.io/rpc',
       entropyContract: '0x0000000000000000000000000000000000000000', // Will be updated with actual contract
       explorerUrl: 'https://arbiscan.io',
       entropyExplorerUrl: 'https://entropy-explorer.pyth.network'
     },
-    'base-testnet': {
+    'base-sepolia': {
       chainId: 84532,
-      name: 'Base Testnet',
-      rpcUrl: process.env.NEXT_PUBLIC_BASE_SEPOLIA_RPC || 'https://testnet.base.org',
+      name: 'Base Sepolia',
+      rpcUrl: process.env.NEXT_PUBLIC_BASE_SEPOLIA_RPC || 'https://sepolia.base.org',
       entropyContract: '0x0000000000000000000000000000000000000000', // Will be updated with actual contract
-      explorerUrl: 'https://testnet.basescan.org',
+      explorerUrl: 'https://sepolia.basescan.org',
       entropyExplorerUrl: 'https://entropy-explorer.pyth.network'
     },
     'base': {
@@ -50,7 +50,7 @@ export const PYTH_ENTROPY_CONFIG = {
   },
 
   // Default network
-  DEFAULT_NETWORK: 'flow-testnet',
+  DEFAULT_NETWORK: 'arbitrum-sepolia',
 
   // Game types supported
   GAME_TYPES: {
@@ -77,7 +77,7 @@ export const PYTH_ENTROPY_CONFIG = {
   EXPLORER_CONFIG: {
     baseUrl: 'https://entropy-explorer.pyth.network',
     // Supported chains for explorer
-    supportedChains: ['flow-testnet', 'flow-one', 'base-testnet', 'base', 'blast'],
+    supportedChains: ['arbitrum-sepolia', 'arbitrum-one', 'base-sepolia', 'base', 'blast'],
     // Transaction link format
     transactionLinkFormat: 'https://entropy-explorer.pyth.network/tx/{txHash}'
   },

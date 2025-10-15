@@ -151,16 +151,16 @@ const GameDetail = ({ gameData = {}, bettingTableData = {}, showBettingTable = t
   // Memoize game statistics
   const gameStatistics = useMemo(() => ({
     totalBets: '1,234,567',
-    totalVolume: '5.6M FLOW',
-    avgBetSize: '245 FLOW',
-    maxWin: '35,000 FLOW'
+    totalVolume: '5.6M OG',
+    avgBetSize: '245 OG',
+    maxWin: '35,000 OG'
   }), []);
 
   // Memoize recent big wins
   const recentBigWins = useMemo(() => [
-    { player: "LuckyDragon", amount: "12,500 FLOW", time: "2m ago", bet: "Straight Up" },
-    { player: "CryptoWhale", amount: "8,750 FLOW", time: "5m ago", bet: "Split" },
-    { player: "RoulettePro", amount: "6,300 FLOW", time: "12m ago", bet: "Corner" }
+    { player: "LuckyDragon", amount: "12,500 OG", time: "2m ago", bet: "Straight Up" },
+    { player: "CryptoWhale", amount: "8,750 OG", time: "5m ago", bet: "Split" },
+    { player: "RoulettePro", amount: "6,300 OG", time: "12m ago", bet: "Corner" }
   ], []);
 
   // Add win probability data

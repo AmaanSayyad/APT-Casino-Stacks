@@ -6,15 +6,15 @@ import { OpenInNew, Verified, Security } from '@mui/icons-material';
 const BettingHistory = ({ history }) => {
   const openArbiscan = (txHash) => {
     if (txHash) {
-      const network = process.env.NEXT_PUBLIC_NETWORK || 'flow-testnet';
+      const network = process.env.NEXT_PUBLIC_NETWORK || 'arbitrum-sepolia';
       let explorerUrl;
       
-      if (network === 'flow-testnet') {
-        explorerUrl = `https://testnet.arbiscan.io/tx/${txHash}`;
-      } else if (network === 'flow-one') {
+      if (network === 'arbitrum-sepolia') {
+        explorerUrl = `https://sepolia.arbiscan.io/tx/${txHash}`;
+      } else if (network === 'arbitrum-one') {
         explorerUrl = `https://arbiscan.io/tx/${txHash}`;
       } else {
-        explorerUrl = `https://testnet.etherscan.io/tx/${txHash}`;
+        explorerUrl = `https://sepolia.etherscan.io/tx/${txHash}`;
       }
       
       window.open(explorerUrl, '_blank');
@@ -79,7 +79,7 @@ const BettingHistory = ({ history }) => {
                 {bet.type}
               </Typography>
               <Typography variant="body1" color="text.primary">
-                {bet.amount} FLOW
+                {bet.amount} OG
               </Typography>
               <Typography variant="caption" color="text.secondary">
                 {new Date(bet.timestamp).toLocaleTimeString()}
@@ -91,7 +91,7 @@ const BettingHistory = ({ history }) => {
                 fontWeight="bold"
                 color={bet.won ? 'success.main' : 'error.main'}
               >
-                {bet.won ? '+' : '-'}{bet.payout} FLOW
+                {bet.won ? '+' : '-'}{bet.payout} OG
               </Typography>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', mt: 0.5 }}>
                 <Typography variant="caption" color="text.secondary" sx={{ mr: 1 }}>
