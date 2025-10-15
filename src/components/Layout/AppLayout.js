@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAccount } from 'wagmi';
+import { useStacksWallet } from '@/contexts/StacksWalletContext';
 import WalletConnectionHandler from '../Wallet/WalletConnectionHandler';
 import { useVRFPregeneration } from '../../hooks/useVRFPregeneration';
 import VRFStatusModal from '../VRF/VRFStatusModal';
@@ -9,7 +9,7 @@ import VRFStatusModal from '../VRF/VRFStatusModal';
  * Wraps the entire app with wallet connection handling
  */
 const AppLayout = ({ children }) => {
-  const { address, isConnected } = useAccount();
+  const { address, isConnected } = useStacksWallet();
   const {
     vrfStatus,
     totalVRF,

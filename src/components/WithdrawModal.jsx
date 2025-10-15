@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaTimes, FaWallet, FaCoins, FaArrowRight, FaCheck, FaExclamationTriangle } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
 import { setBalance } from '@/store/balanceSlice';
-import { useAccount } from 'wagmi';
+import { useStacksWallet } from '@/contexts/StacksWalletContext';
 // Mock ethereumClient for demo purposes
 const ethereumClient = {
   waitForTransaction: async ({ transactionHash }) => {
@@ -24,7 +24,7 @@ const WithdrawModal = ({ isOpen, onClose }) => {
   const [error, setError] = useState('');
   
   const { userBalance } = useSelector((state) => state.balance);
-  const { address: account, isConnected: connected } = useAccount();
+  const { address: account, isConnected: connected } = useStacksWallet();
   const dispatch = useDispatch();
   
   // Display balance in OG format

@@ -5,17 +5,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { useAccount, useChainId, useWalletClient } from 'wagmi';
 import { useSelector, useDispatch } from 'react-redux';
 import { setBalance, setLoading, loadBalanceFromStorage } from '@/store/balanceSlice';
-import EthereumConnectWalletButton from "./EthereumConnectWalletButton";
+import { useStacksWallet } from '@/contexts/StacksWalletContext';
+import StacksWalletButton from "./StacksWalletButton";
 import WithdrawModal from "./WithdrawModal";
 import LiveChat from "./LiveChat";
-import { useGlobalWalletPersistence } from '../hooks/useGlobalWalletPersistence';
 
 
 import { useNotification } from './NotificationSystem';
-import { TREASURY_CONFIG } from '../config/treasury';
+import { casinoWallet } from '@/utils/casinoWallet';
 // Enhanced UserBalanceSystem with deposit functionality
 const UserBalanceSystem = {
   getBalance: async (address) => {
@@ -113,7 +112,7 @@ export default function Navbar() {
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const dispatch = useDispatch();
   const { userBalance, isLoading: isLoadingBalance } = useSelector((state) => state.balance);
-  const [walletNetworkName, setWalletNetworkName] = useState("");
+  // Stacks network name from environment
 
   // User balance management
   const [showBalanceModal, setShowBalanceModal] = useState(false);
@@ -124,22 +123,15 @@ export default function Navbar() {
   const [showLiveChat, setShowLiveChat] = useState(false);
 
 
-  // Wallet connection with persistence
-  const { isConnected, address } = useAccount();
-  const chainId = useChainId();
-  const { data: walletClient } = useWalletClient();
+  // Stacks wallet connection
+  const { isConnected, address, balance: stacksBalance, getBalance, userSession } = useStacksWallet();
   const isWalletReady = isConnected && address;
-  
-  // Use global wallet persistence hook
-  useGlobalWalletPersistence();
 
   // Debug wallet connection
   useEffect(() => {
-    console.log('🔗 Wallet connection state:', { 
+    console.log('🔗 Stacks Wallet connection state:', { 
       isConnected, 
-      address, 
-      chainId, 
-      walletClient: !!walletClient,
+      address,
       isWalletReady 
     });
     
@@ -150,15 +142,13 @@ export default function Navbar() {
       const timer = setTimeout(() => {
         console.log('⏰ After delay - Wallet state:', { 
           isConnected, 
-          address, 
-          chainId, 
-          walletClient: !!walletClient,
+          address,
           isWalletReady 
         });
       }, 2000);
       return () => clearTimeout(timer);
     }
-  }, [isConnected, address, chainId, walletClient, isWalletReady]);
+  }, [isConnected, address, isWalletReady]);
 
 
   // Mock notifications for UI purposes
@@ -337,44 +327,25 @@ export default function Navbar() {
     dispatch(setLoading(false));
   };
 
-  // Handle withdraw from house account
+  // Handle withdraw from house account (Stacks)
   const handleWithdraw = async () => {
     if (!isConnected || !address) {
-      notification.error('Please connect your wallet first');
+      notification.error('Please connect your Stacks wallet first');
       return;
     }
 
     try {
       setIsWithdrawing(true);
-      const balanceInOg = parseFloat(userBalance || '0');
-      if (balanceInOg <= 0) {
+      const balanceInStx = parseFloat(userBalance || '0');
+      if (balanceInStx <= 0) {
         notification.error('No balance to withdraw');
         return;
       }
 
-      // Call backend API to process withdrawal from treasury
-      console.log('🔍 Account object:', address);
-      console.log('🔍 Account address:', address);
-      console.log('🔍 Account address type:', typeof address);
+      // Process withdrawal through casino wallet
+      console.log('🔍 Stacks withdrawal for:', { address, amount: balanceInStx });
       
-      const response = await fetch('/api/withdraw', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userAddress: address,
-          amount: balanceInOg
-        })
-      });
-
-      const result = await response.json();
-      console.log('🔍 Withdraw API response:', result);
-
-      if (!response.ok) {
-        const errorMessage = result?.error || 'Withdrawal failed';
-        throw new Error(errorMessage);
-      }
+      const result = await casinoWallet.processWithdrawal(address, balanceInStx);
 
       // Update user balance to 0 after successful withdrawal
       dispatch(setBalance('0'));
@@ -383,16 +354,19 @@ export default function Navbar() {
       localStorage.setItem('userBalance', '0');
       
       // Check if transaction hash exists before using it
-      const txHash = result?.transactionHash || 'Unknown';
+      const txHash = result?.txId || 'Unknown';
       const txDisplay = txHash !== 'Unknown' ? `${txHash.slice(0, 8)}...` : 'Pending';
       
-      notification.success(`Withdrawal transaction sent! ${balanceInOg.toFixed(5)} OG will be transferred. TX: ${txDisplay}`);
+      notification.success(`Withdrawal transaction sent! ${balanceInStx.toFixed(2)} STX will be transferred. TX: ${txDisplay}`);
       
       // Close the modal
       setShowBalanceModal(false);
       
+      // Refresh wallet balance
+      await getBalance();
+      
     } catch (error) {
-      console.error('Withdraw error:', error);
+      console.error('Stacks withdraw error:', error);
       
       // Ensure error message is a string
       const errorMessage = error?.message || 'Unknown error occurred';
@@ -404,7 +378,7 @@ export default function Navbar() {
     }
   };
 
-  // Handle deposit to house balance
+  // Handle deposit to house balance (Stacks)
   const handleDeposit = async () => {
     // Prevent multiple simultaneous deposits
     if (isDepositing) {
@@ -413,7 +387,7 @@ export default function Navbar() {
     }
     
     if (!isConnected || !address) {
-      notification.error('Please connect your wallet first');
+      notification.error('Please connect your Stacks wallet first');
       return;
     }
 
@@ -423,156 +397,75 @@ export default function Navbar() {
       return;
     }
     
-    // Check deposit limits
-    if (amount < TREASURY_CONFIG.LIMITS.MIN_DEPOSIT) {
-      notification.error(`Minimum deposit amount is ${TREASURY_CONFIG.LIMITS.MIN_DEPOSIT} OG`);
-      return;
-    }
-    
-    if (amount > TREASURY_CONFIG.LIMITS.MAX_DEPOSIT) {
-      notification.error(`Maximum deposit amount is ${TREASURY_CONFIG.LIMITS.MAX_DEPOSIT} OG`);
-      return;
-    }
+    // Balance check will be handled by the wallet during transaction
 
     setIsDepositing(true);
-    console.log('🚀 Starting deposit process for:', amount, 'OG');
+    console.log('🚀 Starting Stacks deposit process for:', amount, 'STX');
+    
     try {
-      console.log('Depositing to house balance:', { address: address, amount });
+      // Use Stacks Connect for transaction
+      // Use testnet treasury address from environment
+      const TREASURY_ADDRESS = process.env.CASINO_TREASURY_ADDRESS || 'STD6F0F02A9F329E734724AEFA5E70DDD2A6B6B868';
       
-      // Check if MetaMask is available
-      if (!window.ethereum) {
-        throw new Error('MetaMask is not installed');
+      const amountInMicroSTX = Math.floor(amount * 1000000);
+
+      // Check if user session exists
+      if (!userSession || !userSession.isUserSignedIn()) {
+        notification.error('Please reconnect your wallet');
+        setIsDepositing(false);
+        return;
       }
+
+      // Use openSTXTransfer which should work with existing session
+      const { openSTXTransfer } = await import('@stacks/connect');
       
-      // Request account access if not already connected
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      const userAccount = accounts[0];
-      
-      // Check if user is on 0G Galileo network
-      const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-      const expectedChainId = TREASURY_CONFIG.NETWORK.CHAIN_ID;
-      
-      console.log('🔍 Current chain ID:', chainId);
-      console.log('🔍 Expected chain ID:', expectedChainId);
-      
-      if (chainId !== expectedChainId) {
-        console.log('🔄 Need to switch network...');
-        // Try to switch to 0G Galileo
-        try {
-          console.log('🔄 Attempting to switch to 0G Galileo...');
-          await window.ethereum.request({
-            method: 'wallet_switchEthereumChain',
-            params: [{ chainId: expectedChainId }],
-          });
-          console.log('✅ Successfully switched to 0G Galileo');
-        } catch (switchError) {
-          console.log('⚠️ Switch error:', switchError);
-          // If 0G Galileo is not added, add it
-          if (switchError.code === 4902) {
-            console.log('🔧 Network not found, adding 0G Galileo...');
-            try {
-              await window.ethereum.request({
-                method: 'wallet_addEthereumChain',
-                params: [{
-                  chainId: expectedChainId,
-                  chainName: TREASURY_CONFIG.NETWORK.CHAIN_NAME,
-                  nativeCurrency: {
-                    name: 'OG',
-                    symbol: 'OG',
-                    decimals: 18
-                  },
-                  rpcUrls: [TREASURY_CONFIG.NETWORK.RPC_URL],
-                  blockExplorerUrls: [TREASURY_CONFIG.NETWORK.EXPLORER_URL]
-                }]
-              });
-              console.log('✅ Successfully added 0G Galileo network');
-              
-              // Try to switch again after adding
-              await window.ethereum.request({
-                method: 'wallet_switchEthereumChain',
-                params: [{ chainId: expectedChainId }],
-              });
-              console.log('✅ Successfully switched to 0G Galileo after adding');
-            } catch (addError) {
-              console.error('❌ Failed to add network:', addError);
-              throw new Error(`Failed to add 0G Galileo network: ${addError.message}`);
-            }
-          } else {
-            console.error('❌ Switch error:', switchError);
-            throw new Error(`Please switch to ${TREASURY_CONFIG.NETWORK.CHAIN_NAME} network. Error: ${switchError.message}`);
+      openSTXTransfer({
+        recipient: TREASURY_ADDRESS,
+        amount: amountInMicroSTX.toString(),
+        memo: 'Casino Deposit',
+        onFinish: async (data) => {
+          console.log('Transaction sent:', data.txId);
+          
+          try {
+            // Process deposit through casino wallet
+            await casinoWallet.processDeposit(address, amount, data.txId);
+            
+            // Update local balance
+            const currentBalance = parseFloat(userBalance || '0');
+            const newBalance = (currentBalance + amount).toString();
+            
+            dispatch(setBalance(newBalance));
+            localStorage.setItem('userBalance', newBalance);
+            
+            notification.success(`Successfully deposited ${amount} STX! TX: ${data.txId.slice(0, 10)}...`);
+            setDepositAmount("");
+            
+            // Refresh wallet balance
+            await getBalance();
+          } catch (error) {
+            console.error('Failed to process deposit:', error);
+            notification.error('Deposit transaction sent but failed to update balance');
+          } finally {
+            setIsDepositing(false);
           }
+        },
+        onCancel: () => {
+          console.log('Transaction cancelled');
+          notification.info('Deposit cancelled');
+          setIsDepositing(false);
         }
-      } else {
-        console.log('✅ Already on correct network');
-      }
-      
-      // Casino treasury address from config
-      const TREASURY_ADDRESS = TREASURY_CONFIG.ADDRESS;
-      
-      // Convert amount to Wei (18 decimals)
-      const amountWei = (amount * 10**18).toString();
-      
-      // Send transaction to treasury
-      const transactionParameters = {
-        to: TREASURY_ADDRESS,
-        from: userAccount,
-        value: '0x' + parseInt(amountWei).toString(16), // Convert to hex
-        gas: TREASURY_CONFIG.GAS.DEPOSIT_LIMIT, // Gas limit from config
-      };
-      
-      console.log('Sending transaction to MetaMask:', transactionParameters);
-      
-      // Request transaction from MetaMask
-      const txHash = await window.ethereum.request({
-        method: 'eth_sendTransaction',
-        params: [transactionParameters],
       });
       
-      console.log('Transaction sent:', txHash);
-      
-      // Wait for transaction confirmation
-      notification.info(`Transaction sent! Hash: ${txHash.slice(0, 10)}...`);
-      
-      // Wait for confirmation (you can implement proper confirmation checking here)
-      await new Promise(resolve => setTimeout(resolve, 3000)); // Wait 3 seconds
-      
-      // After successful transaction, update local balance
-      const currentBalance = parseFloat(userBalance || '0');
-      const newBalance = (currentBalance + amount).toString();
-      
-      console.log('🔄 Balance update before dispatch:', { currentBalance, amount, newBalance });
-      
-      // Update Redux store immediately (this will also update localStorage)
-      dispatch(setBalance(newBalance));
-      
-      console.log('✅ Balance updated in Redux store');
-      
-      // Call deposit API to record the transaction (optional - for logging purposes only)
-      try {
-        if (address) {
-          const result = await UserBalanceSystem.deposit(address, amount, txHash);
-          console.log('✅ Deposit recorded in API:', result);
-        } else {
-          console.warn('Account address not available for API call');
-        }
-        
-      } catch (apiError) {
-        console.warn('⚠️ Could not record deposit in API:', apiError);
-        // Don't fail the deposit if API call fails - balance is already updated
-      }
-      
-      notification.success(`Successfully deposited ${amount} OG to casino treasury! TX: ${txHash.slice(0, 10)}...`);
-      
-      setDepositAmount("");
-      
-      
-      
     } catch (error) {
-      console.error('Deposit error:', error);
+      console.error('Stacks deposit error:', error);
       notification.error(`Deposit failed: ${error.message}`);
-    } finally {
       setIsDepositing(false);
     }
+    
+    // Fallback timeout to reset loading state
+    setTimeout(() => {
+      setIsDepositing(false);
+    }, 5000);
   };
 
   // Handle search input
@@ -664,26 +557,7 @@ export default function Navbar() {
 
   // Pyth Entropy handles randomness generation
 
-  // Detect Ethereum wallet network (best-effort)
-  useEffect(() => {
-    const readNetwork = async () => {
-      try {
-        if (typeof window !== 'undefined' && window.ethereum?.network) {
-          const n = await window.ethereum.network();
-          if (n?.name) setWalletNetworkName(String(n.name).toLowerCase());
-        }
-      } catch {}
-    };
-    readNetwork();
-    const off = window?.ethereum?.onNetworkChange?.((n) => {
-      try { setWalletNetworkName(String(n?.name || '').toLowerCase()); } catch {}
-    });
-    return () => {
-      try { off && off(); } catch {}
-    };
-  }, []);
-
-      // switchToTestnet function removed
+  // Stacks network is configured in environment variables
 
   return (
     <>
@@ -1015,8 +889,8 @@ export default function Navbar() {
               Live Chat
             </button>
             
-            {/* Ethereum Wallet Button */}
-            <EthereumConnectWalletButton />
+            {/* Stacks Wallet Button */}
+            <StacksWalletButton />
       
           </div>
         </div>
@@ -1133,16 +1007,16 @@ export default function Navbar() {
               
               {/* Deposit Section */}
               <div className="mb-6">
-                <h4 className="text-sm font-medium text-white mb-2">Deposit OG to Casino Treasury</h4>
+                <h4 className="text-sm font-medium text-white mb-2">Deposit STX to Casino Treasury</h4>
                 <div className="text-xs text-gray-400 mb-2">
-                  Treasury: {TREASURY_CONFIG.ADDRESS.slice(0, 10)}...{TREASURY_CONFIG.ADDRESS.slice(-8)}
+                  Treasury: {(process.env.CASINO_TREASURY_ADDRESS || 'STD6F0F02A9F329E734724AEFA5E70DDD2A6B6B868').slice(0, 10)}...{(process.env.CASINO_TREASURY_ADDRESS || 'STD6F0F02A9F329E734724AEFA5E70DDD2A6B6B868').slice(-8)}
                 </div>
                 <div className="flex gap-2">
                   <input
                     type="number"
                     value={depositAmount}
                     onChange={(e) => setDepositAmount(e.target.value)}
-                    placeholder="Enter OG amount"
+                    placeholder="Enter STX amount"
                     className="flex-1 px-3 py-2 bg-gray-800/50 border border-gray-600/50 rounded text-white placeholder-gray-400 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/25"
                     min="0"
                     step="0.00000001"

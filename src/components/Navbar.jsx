@@ -4,10 +4,10 @@ import React, { useState } from 'react';
 import { AppBar, Toolbar, Container, Box, Button, Typography } from '@mui/material';
 import { Zap } from 'lucide-react';
 import NetworkSwitcher from './NetworkSwitcher';
-import { useAccount } from 'wagmi';
+import { useStacksWallet } from '@/contexts/StacksWalletContext';
 
 const Navbar = () => {
-  const { address, isConnected } = useAccount();
+  const { address, isConnected } = useStacksWallet();
   const [showVRFModal] = useState(false); // Placeholder retained to avoid layout changes
 
   return (
