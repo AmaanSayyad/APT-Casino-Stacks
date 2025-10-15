@@ -6,8 +6,6 @@ When I asked the customer support to withdraw money they showed a rule list of w
 
 I was very annoyed of that's how **APT-Casino** was born, which is a combination of GameFi and DeFi all in one platform where new web3 users can play games, perform gambling, but have a safe, secure, transparent platform that does not scam any of their users. Also, I wanted to address common issues in traditional gambling platforms.
 
----
-
 ## 🧩 Problems
 
 The traditional online gambling industry is plagued by several issues, including:
@@ -19,8 +17,6 @@ The traditional online gambling industry is plagued by several issues, including
 - **Lack of True Asset Ownership:** Centralised platforms retain control over user assets, limiting their freedom and security.  
 - **User Adoption of Web2 Users:** Bringing users to web3 and complexity of using wallet first time is kinda difficult for web2 users.  
 - **No Social Layer:** No live streaming, no community chat, no collaborative experience.
-
----
 
 ## 💡 Solution
 
@@ -37,8 +33,6 @@ The traditional online gambling industry is plagued by several issues, including
 - **On-Chain Chat:** **Supabase + Socket.IO** + wallet-signed messages ensure verifiable, real-time communication between players.  
 - **ROI Share Links:** Every withdrawal (profit or loss) generates a shareable proof-link that renders a dynamic card (similar to Binance Futures PnL cards) when posted on X.
 
----
-
 ## ⚙️ Key Features
 
 - **On-Chain Randomness:** Utilizing **Pyth Entropy** on-chain randomness module to ensure provably fair game outcomes.
@@ -51,8 +45,6 @@ The traditional online gambling industry is plagued by several issues, including
 - **Real-Time Updates:** Live game state and balance updates.  
 - **Event System:** Comprehensive event tracking for all game actions.  
 - **Social Layer:** Live streaming, on-chain chat, and NFT-based player profiles.
-
----
 
 ## 🏗️ Architecture
 ![Image 16-10-25 at 12 17 AM](https://github.com/user-attachments/assets/ef66d928-3483-43d9-b105-41e322bd93ca)
