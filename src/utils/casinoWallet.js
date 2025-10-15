@@ -4,9 +4,6 @@ const CASINO_CONFIG = {
   // Use testnet for development, mainnet for production
   network: process.env.NODE_ENV === 'production' ? 'mainnet' : 'testnet',
   
-  // Casino treasury private key (should be stored securely in environment variables)
-  treasuryPrivateKey: process.env.CASINO_TREASURY_PRIVATE_KEY || null,
-  
   // Minimum amounts
   minDeposit: 1, // 1 STX
   minWithdraw: 0.1, // 0.1 STX
@@ -22,13 +19,16 @@ const CASINO_CONFIG = {
 export class CasinoWallet {
   constructor() {
     this.network = CASINO_CONFIG.network;
-    this.treasuryPrivateKey = CASINO_CONFIG.treasuryPrivateKey;
-    this.treasuryAddress = null;
+    this.treasuryAddress = this.network === 'mainnet' 
+      ? process.env.CASINO_TREASURY_ADDRESS_MAINNET 
+      : process.env.CASINO_TREASURY_ADDRESS_TESTNET;
     
-    // Initialize treasury address if private key is available
-    if (this.treasuryPrivateKey) {
-      // For demo purposes, use the address from environment
-      this.treasuryAddress = process.env.CASINO_TREASURY_ADDRESS || null;
+    // Debug info for development
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🏦 Casino Wallet initialized:', {
+        network: this.network,
+        treasuryAddress: this.treasuryAddress
+      });
     }
   }
 
@@ -137,28 +137,38 @@ export class CasinoWallet {
    */
   async processWithdrawal(userAddress, amount) {
     try {
-      if (!this.treasuryPrivateKey) {
-        throw new Error('Treasury private key not configured');
-      }
 
       // Validate withdrawal
       if (amount < CASINO_CONFIG.minWithdraw) {
         throw new Error(`Minimum withdrawal is ${CASINO_CONFIG.minWithdraw} STX`);
       }
 
-      // Check treasury balance
-      const treasuryBalance = await this.getTreasuryBalance();
-      const totalAmount = amount + CASINO_CONFIG.withdrawFee;
-      
-      if (treasuryBalance < totalAmount) {
-        throw new Error('Insufficient treasury balance');
+      console.log('💸 Processing real withdrawal:', {
+        userAddress,
+        amount,
+        network: this.network,
+        timestamp: new Date().toISOString()
+      });
+
+      // Call withdrawal API to send real STX transaction
+      const response = await fetch('/api/withdraw', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userAddress: userAddress,
+          amount: amount
+        })
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Withdrawal API failed');
       }
 
-      // For demo purposes, simulate withdrawal transaction
-      const mockTxId = '0x' + Math.random().toString(16).substr(2, 64);
-      
-      // In production, you would create and broadcast a real STX transaction here
-      const result = { txid: mockTxId };
+      console.log('✅ Real withdrawal transaction sent:', result.txId);
 
       console.log('💸 Processing withdrawal:', {
         userAddress,
@@ -167,12 +177,12 @@ export class CasinoWallet {
         timestamp: new Date().toISOString()
       });
 
-      // Mock database update
+      // Database update with real transaction
       const withdrawalRecord = {
         id: Date.now().toString(),
         userAddress,
         amount,
-        txId: result.txid,
+        txId: result.txId, // Use real transaction ID from API
         type: 'withdrawal',
         status: 'completed',
         timestamp: new Date().toISOString()
@@ -243,13 +253,8 @@ export const casinoWallet = new CasinoWallet();
 
 // Helper function to initialize casino wallet
 export const initializeCasinoWallet = () => {
-  if (!process.env.CASINO_TREASURY_PRIVATE_KEY) {
-    console.warn('⚠️  Casino treasury private key not found in environment variables');
-    console.log('🔧 To generate a new treasury wallet, run: CasinoWallet.generateTreasuryWallet()');
-    return null;
-  }
-  
   console.log('✅ Casino wallet initialized');
   console.log('🏦 Treasury Address:', casinoWallet.getTreasuryAddress());
+  console.log('🌐 Network:', casinoWallet.network);
   return casinoWallet;
 };

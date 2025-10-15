@@ -17,10 +17,10 @@ const StacksDepositWithdraw = () => {
   const [isWithdrawing, setIsWithdrawing] = useState(false);
   const [txId, setTxId] = useState('');
 
-  // Casino treasury address (replace with your actual treasury address)
-  const TREASURY_ADDRESS = 'SP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7'; // Example address
+  // Casino treasury address from environment
+  const TREASURY_ADDRESS = process.env.NEXT_PUBLIC_CASINO_TREASURY_ADDRESS || 'STZ2YCW72SDSCVYQKEPC3PNQ7J69EFTFERHEPC9';
 
-  const network = new StacksMainnet(); // Use StacksTestnet() for testnet
+  const network = new StacksTestnet(); // Use testnet for development
 
   const handleDeposit = async () => {
     if (!isConnected || !amount || !userSession) return;

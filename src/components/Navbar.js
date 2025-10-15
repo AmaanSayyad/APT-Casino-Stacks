@@ -390,10 +390,27 @@ export default function Navbar() {
       notification.error('Please connect your Stacks wallet first');
       return;
     }
+    
+    // Additional wallet validation
+    if (!userSession || !userSession.isUserSignedIn()) {
+      notification.error('Wallet session expired. Please reconnect your wallet.');
+      return;
+    }
 
     const amount = parseFloat(depositAmount);
     if (!amount || amount <= 0) {
       notification.error('Please enter a valid deposit amount');
+      return;
+    }
+    
+    // Validate amount limits
+    if (amount < 0.001) {
+      notification.error('Minimum deposit amount is 0.001 STX');
+      return;
+    }
+    
+    if (amount > 1000) {
+      notification.error('Maximum deposit amount is 1000 STX');
       return;
     }
     
@@ -405,7 +422,7 @@ export default function Navbar() {
     try {
       // Use Stacks Connect for transaction
       // Use testnet treasury address from environment
-      const TREASURY_ADDRESS = process.env.CASINO_TREASURY_ADDRESS || 'STD6F0F02A9F329E734724AEFA5E70DDD2A6B6B868';
+      const TREASURY_ADDRESS = process.env.NEXT_PUBLIC_CASINO_TREASURY_ADDRESS || 'STZ2YCW72SDSCVYQKEPC3PNQ7J69EFTFERHEPC9';
       
       const amountInMicroSTX = Math.floor(amount * 1000000);
 
@@ -416,14 +433,48 @@ export default function Navbar() {
         return;
       }
 
-      // Use openSTXTransfer which should work with existing session
-      const { openSTXTransfer } = await import('@stacks/connect');
+      // Enhanced STX transfer with proper validation and fallback
+      const { openSTXTransfer, showConnect } = await import('@stacks/connect');
       
-      openSTXTransfer({
+      console.log('🔍 Starting STX transfer with details:', {
         recipient: TREASURY_ADDRESS,
-        amount: amountInMicroSTX.toString(),
+        amount: amountInMicroSTX,
         memo: 'Casino Deposit',
-        onFinish: async (data) => {
+        userAddress: address,
+        userBalance: stacksBalance
+      });
+      
+      // Comprehensive validation
+      if (!TREASURY_ADDRESS || TREASURY_ADDRESS.length < 20) {
+        throw new Error('Invalid treasury address');
+      }
+      
+      if (amountInMicroSTX <= 0) {
+        throw new Error('Amount must be greater than 0');
+      }
+      
+      // Check if user has enough balance (including fee)
+      const requiredBalance = (amountInMicroSTX + 1000) / 1000000; // Add 0.001 STX for fee
+      if (stacksBalance < requiredBalance) {
+        throw new Error(`Insufficient balance. Required: ${requiredBalance.toFixed(6)} STX, Available: ${stacksBalance.toFixed(6)} STX`);
+      }
+      
+      // Try openSTXTransfer first, with fallback to showConnect
+      try {
+        console.log('🚀 Attempting openSTXTransfer...');
+        
+        openSTXTransfer({
+          recipient: TREASURY_ADDRESS,
+          amount: amountInMicroSTX.toString(),
+          memo: 'Casino Deposit',
+          network: 'testnet',
+          postConditions: [],
+          fee: 1000,
+          appDetails: {
+            name: 'APT Casino',
+            icon: window.location.origin + '/favicon.ico'
+          },
+          onFinish: async (data) => {
           console.log('Transaction sent:', data.txId);
           
           try {
@@ -449,12 +500,43 @@ export default function Navbar() {
             setIsDepositing(false);
           }
         },
-        onCancel: () => {
-          console.log('Transaction cancelled');
-          notification.info('Deposit cancelled');
+          onCancel: () => {
+            console.log('Transaction cancelled');
+            notification.info('Deposit cancelled');
+            setIsDepositing(false);
+          }
+        });
+        
+      } catch (openSTXError) {
+        console.error('❌ openSTXTransfer failed:', openSTXError);
+        console.log('🔄 Trying alternative method with showConnect...');
+        
+        // Fallback to showConnect method
+        try {
+          await showConnect({
+            appDetails: {
+              name: 'APT Casino',
+              icon: window.location.origin + '/favicon.ico',
+            },
+            redirectTo: '/',
+            onFinish: () => {
+              // After connection, try the transaction again
+              setTimeout(() => {
+                notification.info('Wallet connected. Please try the deposit again.');
+                setIsDepositing(false);
+              }, 1000);
+            },
+            onCancel: () => {
+              notification.info('Connection cancelled');
+              setIsDepositing(false);
+            },
+          });
+        } catch (connectError) {
+          console.error('❌ showConnect also failed:', connectError);
+          notification.error(`Deposit failed: ${connectError.message}`);
           setIsDepositing(false);
         }
-      });
+      }
       
     } catch (error) {
       console.error('Stacks deposit error:', error);
@@ -1009,7 +1091,7 @@ export default function Navbar() {
               <div className="mb-6">
                 <h4 className="text-sm font-medium text-white mb-2">Deposit STX to Casino Treasury</h4>
                 <div className="text-xs text-gray-400 mb-2">
-                  Treasury: {(process.env.CASINO_TREASURY_ADDRESS || 'STD6F0F02A9F329E734724AEFA5E70DDD2A6B6B868').slice(0, 10)}...{(process.env.CASINO_TREASURY_ADDRESS || 'STD6F0F02A9F329E734724AEFA5E70DDD2A6B6B868').slice(-8)}
+                  Treasury: {(process.env.NEXT_PUBLIC_CASINO_TREASURY_ADDRESS || 'STZ2YCW72SDSCVYQKEPC3PNQ7J69EFTFERHEPC9').slice(0, 10)}...{(process.env.NEXT_PUBLIC_CASINO_TREASURY_ADDRESS || 'STZ2YCW72SDSCVYQKEPC3PNQ7J69EFTFERHEPC9').slice(-8)}
                 </div>
                 <div className="flex gap-2">
                   <input
