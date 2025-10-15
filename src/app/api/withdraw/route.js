@@ -1,10 +1,10 @@
-import { 
+const { 
   makeSTXTokenTransfer, 
   broadcastTransaction, 
   AnchorMode,
   PostConditionMode 
-} from '@stacks/transactions';
-import { StacksTestnet, StacksMainnet } from '@stacks/network';
+} = require('@stacks/transactions');
+const { StacksTestnet, StacksMainnet } = require('@stacks/network');
 
 export async function POST(request) {
   try {
@@ -22,9 +22,8 @@ export async function POST(request) {
     }
 
     // Determine network
-    const network = process.env.NODE_ENV === 'production' 
-      ? new StacksMainnet() 
-      : new StacksTestnet();
+    const isProduction = process.env.NODE_ENV === 'production';
+    const network = isProduction ? new StacksMainnet() : new StacksTestnet();
 
     // Convert amount to microSTX
     const amountInMicroSTX = Math.floor(amount * 1000000);

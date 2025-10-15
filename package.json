@@ -44,7 +44,7 @@
     "@react-three/fiber": "^8.14.5",
     "@reduxjs/toolkit": "^1.9.7",
     "@stacks/connect": "^7.10.2",
-    "@stacks/network": "^7.2.0",
+    "@stacks/network": "^6.17.0",
     "@stacks/transactions": "^6.17.0",
     "@stacks/wallet-sdk": "^6.17.0",
     "@supabase/supabase-js": "^2.57.4",

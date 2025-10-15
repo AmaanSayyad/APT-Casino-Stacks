@@ -173,7 +173,7 @@ export class CasinoWallet {
       console.log('💸 Processing withdrawal:', {
         userAddress,
         amount,
-        txId: result.txid,
+        txId: result.txId, // Use consistent property name
         timestamp: new Date().toISOString()
       });
 
