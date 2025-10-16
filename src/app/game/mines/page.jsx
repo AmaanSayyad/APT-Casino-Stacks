@@ -18,6 +18,7 @@ import { HiLightningBolt, HiOutlineTrendingUp, HiOutlineChartBar } from "react-i
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "next-themes";
 import useWalletStatus from '@/hooks/useWalletStatus';
+import { saveGameResult } from '@/utils/gameHistory';
 import EthereumConnectWalletButton from '@/components/EthereumConnectWalletButton';
 import Image from "next/image";
 import "./mines.css";
@@ -229,6 +230,39 @@ export default function Mines() {
       time: 'Just now',
       entropyProof: entropyProof
     };
+    
+    // Save game result with Stacks logging
+    saveGameResult({
+      vrfRequestId: result.entropyProof?.requestId || 'mines_' + Date.now(),
+      userAddress: address || 'anonymous',
+      gameType: 'MINES',
+      gameConfig: { mineCount: result.mines || 0, gridSize: '5x5' },
+      resultData: {
+        revealedTiles: result.tilesRevealed || 0,
+        hitMine: !result.won,
+        multiplier: result.multiplier || 0
+      },
+      betAmount: result.betAmount || 0,
+      payoutAmount: result.won ? (result.payout || 0) : 0,
+      entropyProof: result.entropyProof
+    }).then(saveResult => {
+      // Add Stacks transaction info to the history item
+      if (saveResult?.stacksLogResult?.txId) {
+        newHistoryItem.stacksTxId = saveResult.stacksLogResult.txId;
+        newHistoryItem.stacksExplorerUrl = saveResult.stacksLogResult.stacksExplorerUrl;
+        
+        // Update the game history with Stacks info
+        setGameHistory(prev => {
+          const updatedHistory = [...prev];
+          if (updatedHistory.length > 0) {
+            updatedHistory[0] = { ...updatedHistory[0], ...newHistoryItem };
+          }
+          return updatedHistory;
+        });
+      }
+    }).catch(saveError => {
+      console.warn('⚠️ Failed to save mines game result:', saveError);
+    });
     
     setGameHistory(prev => [newHistoryItem, ...prev].slice(0, 50));
     

@@ -275,6 +275,14 @@ const RouletteHistory = ({ bettingHistory = [] }) => {
       window.open(entropyExplorerUrl, '_blank');
     }
   };
+
+  // Open Stacks Explorer link
+  const openStacksExplorer = (txId) => {
+    if (txId) {
+      const stacksExplorerUrl = `https://explorer.stacks.co/txid/${txId}?chain=testnet`;
+      window.open(stacksExplorerUrl, '_blank');
+    }
+  };
   
   return (
     <Paper
@@ -385,7 +393,7 @@ const RouletteHistory = ({ bettingHistory = [] }) => {
                       <TableCell align="center">Amount</TableCell>
                       <TableCell align="center">Result</TableCell>
                       <TableCell align="right">Payout</TableCell>
-                      <TableCell align="center">Entropy Explorer</TableCell>
+                      <TableCell align="center">Blockchain Proofs</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -582,7 +590,32 @@ const RouletteHistory = ({ bettingHistory = [] }) => {
                                   >
                                     <FaExternalLinkAlt size={10} color="#681DDB" />
                                     <Typography variant="caption" sx={{ color: '#681DDB', fontSize: '0.7rem', fontWeight: 'bold' }}>
-                                      Entropy
+                                      Pyth
+                                    </Typography>
+                                  </Box>
+                                )}
+                                {bet.stacksTxId && (
+                                  <Box
+                                    onClick={() => openStacksExplorer(bet.stacksTxId)}
+                                    sx={{
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      gap: 0.5,
+                                      cursor: 'pointer',
+                                      padding: '2px 6px',
+                                      borderRadius: '4px',
+                                      backgroundColor: 'rgba(255, 140, 0, 0.1)',
+                                      border: '1px solid rgba(255, 140, 0, 0.3)',
+                                      transition: 'all 0.2s ease',
+                                      '&:hover': {
+                                        backgroundColor: 'rgba(255, 140, 0, 0.2)',
+                                        transform: 'scale(1.05)'
+                                      }
+                                    }}
+                                  >
+                                    <FaExternalLinkAlt size={10} color="#FF8C00" />
+                                    <Typography variant="caption" sx={{ color: '#FF8C00', fontSize: '0.7rem', fontWeight: 'bold' }}>
+                                      Stacks
                                     </Typography>
                                   </Box>
                                 )}

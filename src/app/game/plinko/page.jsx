@@ -14,6 +14,7 @@ import { Typography } from "@mui/material";
 import { GiRollingDices, GiCardRandom, GiPokerHand } from "react-icons/gi";
 import { FaPercentage, FaBalanceScale, FaChartLine, FaCoins, FaTrophy, FaPlay, FaExternalLinkAlt } from "react-icons/fa";
 import pythEntropyService from '../../../services/PythEntropyService';
+import { saveGameResult } from '@/utils/gameHistory';
 
 export default function Plinko() {
   const userBalance = useSelector((state) => state.balance.userBalance);
@@ -220,6 +221,33 @@ export default function Plinko() {
       };
       
       console.log('📝 Enhanced bet result:', enhancedBetResult);
+      
+      // Save game result with both Pyth and Stacks logging
+      try {
+        const saveResult = await saveGameResult({
+          vrfRequestId: randomData.entropyProof?.requestId,
+          userAddress: 'anonymous', // We don't have user address in Plinko
+          gameType: 'PLINKO',
+          gameConfig: { rows: currentRows, riskLevel: currentRiskLevel },
+          resultData: {
+            ballPath: enhancedBetResult.ballPath,
+            finalSlot: enhancedBetResult.finalSlot,
+            multiplier: enhancedBetResult.multiplier
+          },
+          betAmount: currentBetAmount,
+          payoutAmount: enhancedBetResult.payout,
+          entropyProof: enhancedBetResult.entropyProof
+        });
+        
+        // Add Stacks transaction info to the bet result
+        if (saveResult?.stacksLogResult?.txId) {
+          enhancedBetResult.stacksTxId = saveResult.stacksLogResult.txId;
+          enhancedBetResult.stacksExplorerUrl = saveResult.stacksLogResult.stacksExplorerUrl;
+        }
+      } catch (saveError) {
+        console.warn('⚠️ Failed to save game result:', saveError);
+      }
+      
       setGameHistory(prev => [enhancedBetResult, ...prev].slice(0, 100)); // Keep up to last 100 entries
       
     } catch (error) {

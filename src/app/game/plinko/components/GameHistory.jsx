@@ -30,6 +30,14 @@ export default function GameHistory({ history }) {
       window.open(explorerUrl, '_blank');
     }
   };
+
+  // Open Stacks Explorer link
+  const openStacksExplorer = (txId) => {
+    if (txId) {
+      const stacksExplorerUrl = `https://explorer.stacks.co/txid/${txId}?chain=testnet`;
+      window.open(stacksExplorerUrl, '_blank');
+    }
+  };
   
   return (
     <div>
@@ -67,7 +75,7 @@ export default function GameHistory({ history }) {
                 Payout
               </th>
               <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">
-                Entropy Explorer
+                Blockchain Proofs
               </th>
             </tr>
           </thead>
@@ -107,14 +115,14 @@ export default function GameHistory({ history }) {
                         <div className="text-xs text-gray-300 font-mono">
                           <div className="text-yellow-400 font-bold">{game.entropyProof.sequenceNumber && game.entropyProof.sequenceNumber !== '0' ? String(game.entropyProof.sequenceNumber) : ''}</div>
                         </div>
-                        <div className="flex gap-1">
+                        <div className="flex flex-wrap gap-1">
                           {game.entropyProof.arbiscanUrl && (
                             <button
                               onClick={() => window.open(game.entropyProof.arbiscanUrl, '_blank')}
                               className="flex items-center gap-1 px-2 py-1 bg-blue-500/10 border border-blue-500/30 rounded text-blue-400 text-xs hover:bg-blue-500/20 transition-colors"
                             >
                               <FaExternalLinkAlt size={8} />
-                              Arbiscan
+                              Arbitrum
                             </button>
                           )}
                           {game.entropyProof.transactionHash && (
@@ -123,7 +131,16 @@ export default function GameHistory({ history }) {
                               className="flex items-center gap-1 px-2 py-1 bg-[#681DDB]/10 border border-[#681DDB]/30 rounded text-[#681DDB] text-xs hover:bg-[#681DDB]/20 transition-colors"
                             >
                               <FaExternalLinkAlt size={8} />
-                              Entropy
+                              Pyth
+                            </button>
+                          )}
+                          {game.stacksTxId && (
+                            <button
+                              onClick={() => openStacksExplorer(game.stacksTxId)}
+                              className="flex items-center gap-1 px-2 py-1 bg-orange-500/10 border border-orange-500/30 rounded text-orange-400 text-xs hover:bg-orange-500/20 transition-colors"
+                            >
+                              <FaExternalLinkAlt size={8} />
+                              Stacks
                             </button>
                           )}
                         </div>

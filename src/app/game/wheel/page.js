@@ -15,11 +15,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setBalance, setLoading, loadBalanceFromStorage } from '@/store/balanceSlice';
 import { useNotification } from '@/components/NotificationSystem';
 import useWalletStatus from '@/hooks/useWalletStatus';
+import { saveGameResult } from '@/utils/gameHistory';
+import pythEntropyService from '@/services/PythEntropyService';
 // Pyth Entropy integration for randomness
 // import vrfProofService from '@/services/VRFProofService';
 // import VRFProofRequiredModal from '@/components/VRF/VRFProofRequiredModal';
 // import vrfLogger from '@/services/VRFLoggingService';
-import pythEntropyService from '@/services/PythEntropyService';
 
 // Import new components
 import WheelVideo from "./components/WheelVideo";
@@ -230,6 +231,31 @@ export default function Home() {
             source: 'Generating...'
           };
 
+          // Save game result with Stacks logging
+          try {
+            const saveResult = await saveGameResult({
+              vrfRequestId: 'wheel_' + Date.now(),
+              userAddress: 'anonymous',
+              gameType: 'WHEEL',
+              gameConfig: { riskLevel: risk },
+              resultData: {
+                multiplier: actualMultiplier,
+                color: detectedColor
+              },
+              betAmount: betAmount,
+              payoutAmount: winAmount,
+              entropyProof: newHistoryItem.entropyProof
+            });
+            
+            // Add Stacks transaction info to the history item
+            if (saveResult?.stacksLogResult?.txId) {
+              newHistoryItem.stacksTxId = saveResult.stacksLogResult.txId;
+              newHistoryItem.stacksExplorerUrl = saveResult.stacksLogResult.stacksExplorerUrl;
+            }
+          } catch (saveError) {
+            console.warn('⚠️ Failed to save wheel game result:', saveError);
+          }
+          
           setGameHistory(prev => [newHistoryItem, ...prev]);
           
           setIsSpinning(false);

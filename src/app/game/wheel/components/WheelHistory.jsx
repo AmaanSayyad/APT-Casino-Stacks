@@ -29,6 +29,14 @@ const WheelHistory = ({ gameHistory = [] }) => {
       window.open(explorerUrl, '_blank');
     }
   };
+
+  // Open Stacks Explorer link
+  const openStacksExplorer = (txId) => {
+    if (txId) {
+      const stacksExplorerUrl = `https://explorer.stacks.co/txid/${txId}?chain=testnet`;
+      window.open(stacksExplorerUrl, '_blank');
+    }
+  };
   
   // Use real game history data from props instead of sample data
   const historyData = gameHistory.length > 0 ? gameHistory : [];
@@ -613,11 +621,31 @@ const WheelHistory = ({ gameHistory = [] }) => {
                               }
                             }}
                           >
-                            Entropy
+                            Pyth
                           </Button>
+                          {item.stacksTxId && (
+                            <Button
+                              onClick={() => openStacksExplorer(item.stacksTxId)}
+                              size="small"
+                              startIcon={<FaExternalLinkAlt size={10} />}
+                              sx={{ 
+                                color: '#FF8C00',
+                                fontSize: '0.7rem',
+                                minWidth: 'auto',
+                                p: 0,
+                                ml: 1,
+                                '&:hover': {
+                                  backgroundColor: 'transparent',
+                                  textDecoration: 'underline',
+                                }
+                              }}
+                            >
+                              Stacks
+                            </Button>
+                          )}
                         </Box>
                         <Typography variant="caption" color="rgba(255,255,255,0.5)">
-                          Pyth Entropy
+                          Blockchain Proofs
                         </Typography>
                       </Box>
                     ) : (

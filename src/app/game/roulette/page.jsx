@@ -21,6 +21,7 @@ import { gameData, bettingTableData } from "./config/gameDetail";
 import { useToken } from "@/hooks/useToken";
 
 import useWalletStatus from '@/hooks/useWalletStatus';
+import { saveGameResult } from '@/utils/gameHistory';
 
 import { FaVolumeMute, FaVolumeUp, FaChartLine, FaCoins, FaTrophy, FaDice, FaBalanceScale, FaRandom, FaPercentage, FaPlayCircle } from "react-icons/fa";
 import { GiCardRandom, GiDiceTarget, GiRollingDices, GiPokerHand } from "react-icons/gi";
@@ -2071,9 +2072,9 @@ export default function GameRoulette() {
           
           // Pyth Entropy handles randomness generation
           console.log('✅ Pyth Entropy randomness processed for Roulette');
-        }).then(() => {
+        }).then(async () => {
           console.log('📊 PYTH ENTROPY: Roulette game completed successfully');
-        }).catch(error => {
+        }).catch(async (error) => {
           console.error('❌ PYTH ENTROPY: Error processing Roulette game:', error);
           // Still add the bet result even if Pyth Entropy processing fails
           newBet.entropyProof = null;
@@ -2085,6 +2086,39 @@ export default function GameRoulette() {
           netResult,
           totalPayout,
           totalBetAmount
+        });
+
+        // Save game result with Stacks logging and update bet object
+        saveGameResult({
+          vrfRequestId: newBet.entropyProof?.requestId || 'roulette_' + Date.now(),
+          userAddress: stacksAddress || 'anonymous',
+          gameType: 'ROULETTE',
+          gameConfig: { betType: 'multiple', totalBets: totalBetAmount },
+          resultData: {
+            winningNumber: winningNumber,
+            winningBets: winningBets.map(bet => bet.name),
+            totalWinAmount: netResult
+          },
+          betAmount: totalBetAmount,
+          payoutAmount: netResult,
+          entropyProof: newBet.entropyProof
+        }).then(result => {
+          // Update the bet object with Stacks transaction info
+          if (result?.stacksLogResult?.txId) {
+            setBettingHistory(prev => {
+              const updatedHistory = [...prev];
+              if (updatedHistory.length > 0) {
+                updatedHistory[0] = { 
+                  ...updatedHistory[0], 
+                  stacksTxId: result.stacksLogResult.txId,
+                  stacksExplorerUrl: result.stacksLogResult.stacksExplorerUrl
+                };
+              }
+              return updatedHistory;
+            });
+          }
+        }).catch(saveError => {
+          console.warn('⚠️ Failed to save roulette game result:', saveError);
         });
 
         setBettingHistory(prev => [newBet, ...prev].slice(0, 50)); // Keep last 50 bets

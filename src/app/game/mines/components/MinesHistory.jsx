@@ -29,6 +29,14 @@ const MinesHistory = ({ gameHistory = [], userStats = {} }) => {
     }
   };
 
+  // Open Stacks Explorer link
+  const openStacksExplorer = (txId) => {
+    if (txId) {
+      const stacksExplorerUrl = `https://explorer.stacks.co/txid/${txId}?chain=testnet`;
+      window.open(stacksExplorerUrl, '_blank');
+    }
+  };
+
   // Open Entropy Explorer link
   const openEntropyExplorer = (txHash) => {
     if (txHash) {
@@ -251,7 +259,7 @@ const MinesHistory = ({ gameHistory = [], userStats = {} }) => {
           <div 
             className="flex items-center cursor-pointer hover:text-white/90 transition-colors text-white/70"
           >
-            Entropy Explorer
+            Blockchain Proofs
           </div>
         </div>
         
@@ -339,7 +347,16 @@ const MinesHistory = ({ gameHistory = [], userStats = {} }) => {
                           className="flex items-center gap-1 px-2 py-1 bg-[#681DDB]/10 border border-[#681DDB]/30 rounded text-[#681DDB] text-xs hover:bg-[#681DDB]/20 transition-colors"
                         >
                           <FaExternalLinkAlt size={8} />
-                          Entropy
+                          Pyth
+                        </button>
+                      )}
+                      {game.stacksTxId && (
+                        <button
+                          onClick={() => openStacksExplorer(game.stacksTxId)}
+                          className="flex items-center gap-1 px-2 py-1 bg-orange-500/10 border border-orange-500/30 rounded text-orange-400 text-xs hover:bg-orange-500/20 transition-colors"
+                        >
+                          <FaExternalLinkAlt size={8} />
+                          Stacks
                         </button>
                       )}
                     </div>
