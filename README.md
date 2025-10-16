@@ -1,31 +1,56 @@
-# 🎰 Stacks Casino
+# APT-Casino
 
-A decentralized casino platform built on **Stacks Network** with provably fair gaming using **Pyth Entropy** for randomness generation.
+A couple of days back, I was was on etherscan exploring some transactions and saw an advertisement of https://stake.com/ which was giving 200% bonus on first deposit, I deposited 120 USDT into stake.com they gave 360 USDT as total balance in their controlled custodial wallet and when I started playing casino games I was shocked to see that I was only able to play with $1 per game and was unable to increase the betting amount beyond $1 coz and when I tried to explore and play other games on the platform the issue was persisting, I reached the customer support and got to know that this platform has cheated him under the name of wager limits as I was using the bonus scheme of 200%.
 
-## 🌟 Features
+When I asked the customer support to withdraw money they showed a rule list of wager limit, which said that if I wanted to withdraw the deposited amount, then I have to play $12,300 worth of gameplay and this was a big shock for me, as I was explained a maths logic by their live support. Thereby, In the hope of getting the deposited money back, I played the different games of stake.com like roulette, mines, spin wheel, etc, the entire night and lost all the money.
 
-### 🎮 Games
-- **🎯 Plinko** - Drop balls through pegs with customizable risk levels
-- **💎 Mines** - Navigate through a minefield to find treasures
-- **🎡 Roulette** - Classic casino roulette with European layout
-- **🎰 Spin Wheel** - Colorful wheel of fortune with multiple betting options
+I was very annoyed of that's how **APT-Casino** was born, which is a combination of GameFi and DeFi all in one platform where new web3 users can play games, perform gambling, but have a safe, secure, transparent platform that does not scam any of their users. Also, I wanted to address common issues in traditional gambling platforms.
 
-### 🔐 Wallet Integration
-- **Stacks Wallet** - Primary wallet for STX deposits/withdrawals
-- **Leather Wallet** - Native Stacks wallet support
-- **Dual Network Support** - Stacks for gaming, Arbitrum for randomness
+## 🧩 Problems
 
-### 🎲 Provably Fair Gaming
-- **Pyth Entropy** - Cryptographically secure randomness
-- **On-chain Verification** - All random numbers are verifiable
-- **Transparent Proofs** - View entropy proofs for each game
+The traditional online gambling industry is plagued by several issues, including:
 
-### 💰 Financial Features
-- **STX Deposits** - Deposit STX tokens to your casino balance
-- **Instant Withdrawals** - Withdraw winnings back to your Stacks wallet
-- **Real-time Balance** - Live balance updates across all games
+- **Unfair Game Outcomes:** 99% of platforms manipulate game results, leading to unfair play.  
+- **High Fees:** Users face exorbitant fees for deposits, withdrawals, and gameplay.  
+- **Restrictive Withdrawal Policies:** Withdrawal limits and conditions often prevent users from accessing their funds.  
+- **Bonus Drawbacks:** Misleading bonus schemes trap users with unrealistic wagering requirements.  
+- **Lack of True Asset Ownership:** Centralised platforms retain control over user assets, limiting their freedom and security.  
+- **User Adoption of Web2 Users:** Bringing users to web3 and complexity of using wallet first time is kinda difficult for web2 users.  
+- **No Social Layer:** No live streaming, no community chat, no collaborative experience.
+
+## 💡 Solution
+
+**APT-Casino** addresses these problems by offering:
+
+- **Provably Fair Gaming:** Utilising the **Pyth Entropy** on-chain randomness module, my platform ensures all game outcomes are 100% transparent and verifiably fair.  
+![commit_and_reveal](https://github.com/user-attachments/assets/816436f9-b186-4a54-a466-7eae508fe55b)
+
+
+- **Flexible Withdrawal Policies:** Providing users with unrestricted access to their funds.  
+- **Transparent Bonus Schemes:** Clear and clean bonus terms without hidden traps.  
+- **True Asset Ownership:** Decentralised asset management ensures users have full control over their assets.  
+- **Fully Gasless and Zero Requirement of Confirming Transactions:** Users do not require to pay gas fees. It's paid by our treasury address to approve a single transaction — we do it all, they can just play as if they are playing in their web2 platforms.  
+- **Live Streaming Integration:** Built with **Livepeer**, enabling real-time game streams, tournaments, and live dealer interaction.  
+- **On-Chain Chat:** **Supabase + Socket.IO** + wallet-signed messages ensure verifiable, real-time communication between players.  
+- **ROI Share Links:** Every withdrawal (profit or loss) generates a shareable proof-link that renders a dynamic card (similar to Binance Futures PnL cards) when posted on X.
+
+## ⚙️ Key Features
+
+- **On-Chain Randomness:** Utilizing **Pyth Entropy** on-chain randomness module to ensure provably fair game outcomes.
+<img width="1536" height="864" alt="355232251-6880e1cb-769c-4272-8b66-686a90abf3be" src="https://github.com/user-attachments/assets/f32cd05a-fbd0-43d7-8aae-cf2f7c7eb72c" />
+
+
+- **Decentralized Asset Management:** Users retain full control over their funds through secure and transparent blockchain transactions.  
+- **User-Friendly Interface:** An intuitive and secure interface for managing funds, placing bets, and interacting with games.  
+- **Diverse Game Selection:** A variety of fully on-chain games, including roulette, mines, plinko, and spin wheel. As a (POC) Proof of Concept, developed fully on-chain 4 games but similar model can be applied to introduce the new casino games to the platform.  
+- **Fully Gasless and Zero Requirement of Confirming Transactions:** Users do not require to pay gas fees. It's paid by our treasury address to approve a single transaction — we do it all, they can just play as if they are playing in their web2 platforms.  
+- **Real-Time Updates:** Live game state and balance updates.  
+- **Event System:** Comprehensive event tracking for all game actions.  
+- **Social Layer:** Live streaming, on-chain chat, and NFT-based player profiles.
 
 ## 🏗️ Architecture
+![Image 16-10-25 at 12 17 AM](https://github.com/user-attachments/assets/ef66d928-3483-43d9-b105-41e322bd93ca)
+
 
 ### Network Stack
 ```
@@ -34,7 +59,7 @@ A decentralized casino platform built on **Stacks Network** with provably fair g
 ├─────────────────────────────────────────────────────────────┤
 │  Frontend (Next.js 14)                                     │
 │  ├── React Components                                      │
-│  ├── Stacks Wallet Integration                             │
+│  ├── Leather Wallet Integration                            │
 │  ├── Game Logic & UI                                       │
 │  └── Real-time Balance Management                          │
 ├─────────────────────────────────────────────────────────────┤
@@ -43,7 +68,7 @@ A decentralized casino platform built on **Stacks Network** with provably fair g
 │  │   ├── Deposits & Withdrawals                            │
 │  │   ├── User Authentication                               │
 │  │   └── Balance Management                                │
-│  └── Arbitrum Sepolia (Pyth Entropy)                       │
+│  └── (Pyth Entropy)                                        │
 │      ├── Random Number Generation                          │
 │      ├── Entropy Proofs                                    │
 │      └── Game Verification                                 │
@@ -67,12 +92,6 @@ A decentralized casino platform built on **Stacks Network** with provably fair g
 │  ├── Deposit/Withdrawal Operations                         │
 │  └── User Authentication                                   │
 ├─────────────────────────────────────────────────────────────┤
-│  Secondary Wallet (Ethereum/Arbitrum)                      │
-│  ├── Wagmi Integration                                     │
-│  ├── Pyth Entropy Access                                  │
-│  ├── Random Number Requests                               │
-│  └── Proof Generation                                     │
-└─────────────────────────────────────────────────────────────┘
 ```
 
 ## 🚀 Quick Start
@@ -81,14 +100,13 @@ A decentralized casino platform built on **Stacks Network** with provably fair g
 - Node.js 18+ 
 - npm or yarn
 - Leather Wallet (for Stacks)
-- MetaMask or compatible wallet (for Pyth Entropy)
 
 ### Installation
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/your-username/stacks-casino.git
-cd stacks-casino
+git clone https://github.com/AmaanSayyad/APT-Casino-Stacks.git
+cd apt-casino-stacks
 ```
 
 2. **Install dependencies**
@@ -109,9 +127,6 @@ NEXT_PUBLIC_STACKS_API_URL=https://api.testnet.stacks.co
 CASINO_TREASURY_PRIVATE_KEY=your_treasury_private_key
 NEXT_PUBLIC_CASINO_TREASURY_ADDRESS=your_treasury_address
 
-# Pyth Entropy Configuration  
-NEXT_PUBLIC_ARBITRUM_SEPOLIA_RPC=https://sepolia-rollup.arbitrum.io/rpc
-TREASURY_PRIVATE_KEY=your_ethereum_private_key
 ```
 
 5. **Start Development Server**
@@ -128,7 +143,6 @@ http://localhost:3000
 
 ### 1. Connect Wallets
 - **Connect Leather Wallet** for STX transactions
-- **Connect MetaMask** for Pyth Entropy (optional, for enhanced randomness)
 
 ### 2. Deposit STX
 - Click on your balance in the navbar
@@ -305,40 +319,6 @@ TREASURY_PRIVATE_KEY=0x080c0b0dc7aa27545fab73d29b06f33e686d1491aef785bf5ced325a3
 - **Colors**: 7 different colors
 - **Max Multiplier**: 50x
 - **House Edge**: ~4%
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🆘 Support
-
-- **Documentation**: Check this README and inline code comments
-- **Issues**: Open an issue on GitHub
-- **Discord**: Join our community server
-- **Email**: support@stackscasino.com
-
-## 🚀 Deployment
-
-### Vercel (Recommended)
-```bash
-npm run build
-vercel --prod
-```
-
-### Environment Variables for Production
-```env
-NEXT_PUBLIC_STACKS_NETWORK=mainnet
-NEXT_PUBLIC_CASINO_TREASURY_ADDRESS=your_mainnet_address
-CASINO_TREASURY_PRIVATE_KEY=your_secure_private_key
-```
 
 ---
 
